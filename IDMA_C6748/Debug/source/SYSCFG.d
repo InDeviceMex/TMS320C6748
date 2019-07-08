@@ -1,8 +1,8 @@
 # FIXED
 
 source/SYSCFG.obj: ../source/SYSCFG.c
-source/SYSCFG.obj: D:/Codigos/CodeComposerStudio/TMS32C6748/IDMA_C6748/include/SYSCFG.h
-source/SYSCFG.obj: D:/Codigos/CodeComposerStudio/TMS32C6748/IDMA_C6748/include/Core.h
+source/SYSCFG.obj: D:/Git/TMS320C6748/IDMA_C6748/include/SYSCFG.h
+source/SYSCFG.obj: D:/Git/TMS320C6748/IDMA_C6748/include/Core.h
 source/SYSCFG.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/stdint.h
 source/SYSCFG.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/_stdint40.h
 source/SYSCFG.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/sys/stdint.h
@@ -13,8 +13,8 @@ source/SYSCFG.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt
 source/SYSCFG.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/sys/_stdint.h
 
 ../source/SYSCFG.c: 
-D:/Codigos/CodeComposerStudio/TMS32C6748/IDMA_C6748/include/SYSCFG.h: 
-D:/Codigos/CodeComposerStudio/TMS32C6748/IDMA_C6748/include/Core.h: 
+D:/Git/TMS320C6748/IDMA_C6748/include/SYSCFG.h: 
+D:/Git/TMS320C6748/IDMA_C6748/include/Core.h: 
 C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/stdint.h: 
 C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/_stdint40.h: 
 C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/sys/stdint.h: 
