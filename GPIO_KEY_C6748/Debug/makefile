@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3
+CG_TOOL_ROOT := C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -149,14 +149,14 @@ all: key_gpio2.out
 key_gpio2.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"C:/ti/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 --abi=eabi --define=c6748 -g --diag_warning=225 --diag_wrap=off --display_error_number -z -m"key_gpio2.map" --heap_size=0x800 --stack_size=0x800 -i"C:/ti/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/ti/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="key_gpio2_linkInfo.xml" --rom_model -o "key_gpio2.out" $(ORDERED_OBJS)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 --abi=eabi --define=c6748 -g --diag_warning=225 --diag_wrap=off --display_error_number -z -m"key_gpio2.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="key_gpio2_linkInfo.xml" --rom_model -o "key_gpio2.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 key_gpio2.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: C6000 Hex Utility'
-	"C:/ti/ccsv8/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "key_gpio2.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "key_gpio2.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 

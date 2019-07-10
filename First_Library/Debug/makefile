@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccs901/ccs/tools/compiler/ti-cgt-c6000_8.3.3
+CG_TOOL_ROOT := C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -150,14 +150,14 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 First_Library.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"C:/ti/ccs901/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=c6748 -g --c99 --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --gen_profile_info -z -m"First_Library.map" --heap_size=0x800 --stack_size=0x800 -i"C:/ti/ccs901/ccs/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/ti/ccs901/ccs/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="First_Library_linkInfo.xml" --rom_model -o "First_Library.out" $(ORDERED_OBJS)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=c6748 -g --c99 --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --gen_profile_info -z -m"First_Library.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="First_Library_linkInfo.xml" --rom_model -o "First_Library.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 First_Library.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: C6000 Hex Utility'
-	"C:/ti/ccs901/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "First_Library.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "First_Library.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
