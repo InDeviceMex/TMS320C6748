@@ -1,0 +1,1 @@
+"./source/Cache.obj" "./source/DDR2.obj" "./source/IDMA.obj" "./source/INTC.obj" "./source/PLLC.obj" "./source/PSC.obj" "./source/SYSCFG.obj" "./source/intvecs.obj" "./source/main.obj" "../C6748.cmd" -llibc.a 
