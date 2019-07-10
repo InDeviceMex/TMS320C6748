@@ -5,7 +5,7 @@
  *      Author: InDev
  */
 
-#include "include/DDR2.h"
+#include "DDR2.h"
 
 
 Ddr2_nStatus DDR2__enInit(void)

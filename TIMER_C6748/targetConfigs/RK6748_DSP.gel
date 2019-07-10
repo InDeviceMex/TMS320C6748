@@ -246,24 +246,13 @@ OnTargetConnect( )
 
 }
 
-menuitem "TIMER2: Frequency KHz"
+menuitem "IDMA: Filler"
 
-slider Frequency(1,100000,1,1,freq) /*start at 10,up to 35*/
+slider Filler(1,0xFFFF,1,1,fill) /*start at 10,up to 35*/
 {
-    fFrequency = freq*1000; /*vary amplit of sine*/
+    filler = (long)(fill*23.6); /*vary amplit of sine*/
 }
-menuitem "TIMER2: Type"
 
-slider Type(0,1,1,1,type) /*start at 10,up to 35*/
-{
-    u32Type = type; /*vary amplit of sine*/
-}
-menuitem "TIMER2: Cycles"
-
-slider Cycles(0,3,1,1,cycles) /*start at 10,up to 35*/
-{
-    u32Cycles = cycles; /*vary amplit of sine*/
-}
 menuitem "TMs320C6748 Memory Map"
 /* ------------------------------------------------------------------------ *
  *                                                                          *

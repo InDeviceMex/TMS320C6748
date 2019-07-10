@@ -4,17 +4,17 @@
  * main.c
  */
 //#include <C6x.h>
-#include <include/Cache.h>
-#include <include/IDMA.h>
-#include <include/BM.h>
-#include <include/INTC.h>
-#include <include/MPU.h>
-#include <include/PLLC.h>
-#include <include/PSC.h>
-#include <include/SYSCFG.h>
-#include <include/DDR2.h>
-#include <include/GPIO.h>
-#include <include/TIMER.h>
+#include <Cache.h>
+#include <IDMA.h>
+#include <BM.h>
+#include <INTC.h>
+#include <MPU.h>
+#include <PLLC.h>
+#include <PSC.h>
+#include <SYSCFG.h>
+#include <DDR2.h>
+#include <GPIO.h>
+#include <TIMER.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -80,12 +80,12 @@ void main(void)
         printf("Enable Cache L1D...   32KB fail\r\n");
     }
     printf("Enable Cache L1D...   32KB complete\r\n");
-    enCacheStatus=Cache__enEnableL2(MEMCFG2_en128K);
+    enCacheStatus=Cache__enEnableL2(MEMCFG2_en256K);
     while (enCacheStatus!=CACHE_enOK)
     {
-        printf("Enable Cache L2...   128KB fail\r\n");
+        printf("Enable Cache L2...   256KB fail\r\n");
     }
-    printf("Enable Cache L2...   128KB complete\r\n");
+    printf("Enable Cache L2...   256KB complete\r\n");
 
     INTC__vDspInit();
     INTC__enCpuIntRegisterRoutine(MASK_enINT4,IDMA1_vIsr);
@@ -180,7 +180,7 @@ void main(void)
         {
             IDMA1__enMem2Mem((uint32_t)u32Test,(uint32_t)u32Test1,10*4);
             counter1++;
-            for(i=0; i<600000000; i++);
+            for(i=0; i<6000000; i++);
             GPIO2->OUT_DATA^=1|0x100;
             i=0;
             IDMA1__enMemFill((uint32_t)filler,(uint32_t)u32Test2,100*4);

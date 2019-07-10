@@ -5,7 +5,7 @@
  *      Author: InDev
  */
 
-#include "include/SYSCFG.h"
+#include "SYSCFG.h"
 
 void SYSCFG__vResgistersUnlock(void)
 {

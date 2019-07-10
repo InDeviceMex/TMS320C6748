@@ -5,7 +5,7 @@
  *      Author: InDev
  */
 
-#include "include/PSC.h"
+#include "PSC.h"
 
 
 Psc_nStatus PSC0__enEnableDsp(void)

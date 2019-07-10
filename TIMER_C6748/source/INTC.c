@@ -5,7 +5,7 @@
  *      Author: InDev
  */
 
-#include "include/INTC.h"
+#include "INTC.h"
 
 static ISRRoutine ISRtable[INT_COUNT];
 static ISRRoutine ECMtable[NUM_EVENTS];

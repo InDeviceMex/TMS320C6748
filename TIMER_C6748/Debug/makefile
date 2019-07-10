@@ -4,7 +4,7 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3
+CG_TOOL_ROOT := C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -130,34 +130,34 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-First_Library.out \
+TIMER_C6748.out \
 
 EXE_OUTPUTS__QUOTED += \
-"First_Library.out" \
+"TIMER_C6748.out" \
 
 BIN_OUTPUTS += \
-First_Library.hex \
+TIMER_C6748.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"First_Library.hex" \
+"TIMER_C6748.hex" \
 
 
 # All Target
 all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
-	@$(MAKE) --no-print-directory -Onone "First_Library.out"
+	@$(MAKE) --no-print-directory -Onone "TIMER_C6748.out"
 
 # Tool invocations
-First_Library.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+TIMER_C6748.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=c6748 -g --c99 --printf_support=minimal --diag_warning=225 --diag_wrap=off --display_error_number --gen_profile_info -z -m"First_Library.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="First_Library_linkInfo.xml" --rom_model -o "First_Library.out" $(ORDERED_OBJS)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/bin/cl6x" -mv6740 --define=c6748 -g --diag_warning=225 --diag_wrap=off --display_error_number -z -m"TIMER_C6748.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="TIMER_C6748_linkInfo.xml" --rom_model -o "TIMER_C6748.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
-First_Library.hex: $(EXE_OUTPUTS)
+TIMER_C6748.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: C6000 Hex Utility'
-	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "First_Library.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/bin/hex6x"  -o "TIMER_C6748.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 

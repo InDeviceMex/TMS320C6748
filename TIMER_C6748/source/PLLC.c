@@ -5,7 +5,7 @@
  *      Author: InDev
  */
 
-#include "include/PLLC.h"
+#include "PLLC.h"
 
 static void PLLC_vDevicePLLC0(uint32_t u32ClkMode, uint32_t u32Pllm, uint32_t u32PostDiv,uint32_t u32PllDiv1, uint32_t u32PllDiv3, uint32_t u32PllDiv7 ) ;
 static void PLLC_vDevicePLLC1(uint32_t u32Pllm,uint32_t u32PostDiv,uint32_t u32PllDiv1, uint32_t PLLDIV2, uint32_t u32PllDiv3 ) ;

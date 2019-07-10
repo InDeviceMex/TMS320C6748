@@ -14,15 +14,15 @@
 /****************************************************************************/
 
 
--stack 0x1000
+-stack 0x7000
 // -heap 0x1000
 //-e fix_start
 
 MEMORY
 {
     DSPL2ROM     o = 0x00700000  l = 0x00100000   /* 1MB L2 Internal ROM */
-    DSPL2RAM     o = 0x00800000  l = 0x00020000   /* 256kB L2 Internal RAM */
-    DSPL2RAM2    o = 0x00820000  l = 0x00020000   /* 256kB L2 Internal RAM */
+    DSPL2RAM     o = 0x00800000  l = 0x00020000   /* 128kB L2 Internal RAM */
+    DSPL2RAM2    o = 0x00820000  l = 0x00020000   /* 128kB L2 Internal RAM */
     DSPL1PRAM    o = 0x00E00000  l = 0x00008000   /* 32kB L1 Internal Program RAM */
     DSPL1DRAM    o = 0x00F00000  l = 0x00008000   /* 32kB L1 Internal Data RAM */
 
@@ -75,7 +75,7 @@ SECTIONS
   
     /* EABI sections */
 
-    /* USEr */
+    /* USER */
 
     .datas >DSPL2RAM
 }

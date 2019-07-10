@@ -6,7 +6,7 @@
  */
 
 
-#include "include/IDMA.h"
+#include "IDMA.h"
 
 
 Idma_nStatus IDMA1__enMem2Mem(uint32_t u32Source, uint32_t u32Dest, uint16_t u16Count)

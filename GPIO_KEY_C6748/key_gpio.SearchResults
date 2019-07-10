@@ -1,7 +1,0 @@
----- LED3 Matches (9 in 1 files) ----
-Test_key_gpio.c (inc):void LED3_ON(void)//LED3--GP0_13
-Test_key_gpio.c (inc):void LED3_OFF(void)//LED3--GP0_13 
-Test_key_gpio.c (inc):void LED3_overturn( void )//LED3--GP0_13 
-Test_key_gpio.c (inc):	GPIO_setDir(GPIO_BANK0,GPIO_PIN13,GPIO_OUTPUT);//GP0_13-LED3
-Test_key_gpio.c (inc):	LED3_ON();
-Test_key_gpio.c (inc):				LED3_overturn();
