@@ -130,33 +130,33 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-key_gpio2.out \
+GPIO_KEY_C6748.out \
 
 EXE_OUTPUTS__QUOTED += \
-"key_gpio2.out" \
+"GPIO_KEY_C6748.out" \
 
 BIN_OUTPUTS += \
-key_gpio2.hex \
+GPIO_KEY_C6748.hex \
 
 BIN_OUTPUTS__QUOTED += \
-"key_gpio2.hex" \
+"GPIO_KEY_C6748.hex" \
 
 
 # All Target
-all: key_gpio2.out
+all: GPIO_KEY_C6748.out
 
 # Tool invocations
-key_gpio2.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
+GPIO_KEY_C6748.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 --abi=eabi --define=c6748 -g --diag_warning=225 --diag_wrap=off --display_error_number -z -m"key_gpio2.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="key_gpio2_linkInfo.xml" --rom_model -o "key_gpio2.out" $(ORDERED_OBJS)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/cl6x" -mv6740 --abi=eabi --define=c6748 -g --diag_warning=225 --diag_wrap=off --display_error_number -z -m"GPIO_KEY_C6748.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="GPIO_KEY_C6748_linkInfo.xml" --rom_model -o "GPIO_KEY_C6748.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
-key_gpio2.hex: $(EXE_OUTPUTS)
+GPIO_KEY_C6748.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: C6000 Hex Utility'
-	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "key_gpio2.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.3/bin/hex6x"  -o "GPIO_KEY_C6748.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
