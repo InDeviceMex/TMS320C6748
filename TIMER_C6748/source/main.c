@@ -87,6 +87,8 @@ void main(void)
     }
     printf("Enable Cache L2...   256KB complete\r\n");
 
+
+
     INTC__vDspInit();
     INTC__enCpuIntRegisterRoutine(MASK_enINT4,IDMA1_vIsr);
     INTC__enEventMap2CpuInt(MASK_enINT4,EVENT_enIDMAINT1);

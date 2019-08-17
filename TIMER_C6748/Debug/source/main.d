@@ -20,17 +20,6 @@ source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/INTC.h
 source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/c6x.h
 source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/vect.h
 source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/MPU.h
-source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/PLLC.h
-source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/SYSCFG.h
-source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/PSC.h
-source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/DDR2.h
-source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/GPIO.h
-source/main.obj: D:/Git/TMS320C6748/TIMER_C6748/include/TIMER.h
-source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/stdio.h
-source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/_ti_config.h
-source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/linkage.h
-source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/stdarg.h
-source/main.obj: C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/string.h
 
 ../source/main.c: 
 D:/Git/TMS320C6748/TIMER_C6748/include/Cache.h: 
@@ -52,14 +41,3 @@ D:/Git/TMS320C6748/TIMER_C6748/include/INTC.h:
 C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/c6x.h: 
 C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/vect.h: 
 D:/Git/TMS320C6748/TIMER_C6748/include/MPU.h: 
-D:/Git/TMS320C6748/TIMER_C6748/include/PLLC.h: 
-D:/Git/TMS320C6748/TIMER_C6748/include/SYSCFG.h: 
-D:/Git/TMS320C6748/TIMER_C6748/include/PSC.h: 
-D:/Git/TMS320C6748/TIMER_C6748/include/DDR2.h: 
-D:/Git/TMS320C6748/TIMER_C6748/include/GPIO.h: 
-D:/Git/TMS320C6748/TIMER_C6748/include/TIMER.h: 
-C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/stdio.h: 
-C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/_ti_config.h: 
-C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/linkage.h: 
-C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/stdarg.h: 
-C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include/string.h: 

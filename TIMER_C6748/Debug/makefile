@@ -150,7 +150,7 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 TIMER_C6748.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/bin/cl6x" -mv6740 --define=c6748 -g --diag_warning=225 --diag_wrap=off --display_error_number -z -m"TIMER_C6748.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="TIMER_C6748_linkInfo.xml" --rom_model -o "TIMER_C6748.out" $(ORDERED_OBJS)
+	"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=c6748 -g --c99 --strict_ansi --diag_warning=225 --diag_wrap=off --display_error_number -z -m"TIMER_C6748.map" --heap_size=0x800 --stack_size=0x800 -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/lib" -i"C:/Tools/IDE/TexasInstruments/CCSv9/ccs/tools/compiler/ti-cgt-c6000_8.3.4/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="TIMER_C6748_linkInfo.xml" --rom_model -o "TIMER_C6748.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
