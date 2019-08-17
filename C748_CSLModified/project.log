@@ -1,0 +1,9 @@
+
+!CONFIGURATION: 'com.ti.ccstudio.buildDefinitions.C6000.Debug.71136904' [Sat Jul 27 21:21:56 CDT 2019]
+
+	!TOOL: 'com.ti.ccstudio.buildDefinitions.C6000_7.4.exe.compilerDebug.1114323335'
+
+		!WARNING: Unresolved option: com.ti.ccstudio.buildDefinitions.C6000_7.4.compilerID.C_DIALECT
+
+		!WARNING: Unresolved option: com.ti.ccstudio.buildDefinitions.C6000_7.4.compilerID.GEN_DATA_SUBSECTIONS
+
