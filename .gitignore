@@ -4,4 +4,6 @@
 /RemoteSystemsTempFiles/
 
 **/Debug/*
+**/Release/*
 **/.settings/*
+**/.launches/*
