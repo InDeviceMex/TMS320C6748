@@ -71,6 +71,6 @@ IMAGPROC_nStatus IMAGEPROC__en8bAddMeanBlend(LCDC_TFT_TypeDef* restrict psLayerS
 IMAGPROC_nStatus IMAGEPROC__en8bAddConstant(LCDC_TFT_TypeDef* restrict psLayerSource, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim,uint8_t u8Constant, uint8_t u8Umbral);
 IMAGPROC_nStatus IMAGEPROC__en8bAddMeanConstant(LCDC_TFT_TypeDef* restrict psLayerSource, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim,uint8_t u8Constant, uint8_t u8Umbral);
 
-
+//todo consider HSI subtraction, addition, multipication and division
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */
