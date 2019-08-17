@@ -2343,13 +2343,16 @@ IMAGPROC_nStatus IMAGEPROC__en16bSubtractionABS(LCDC_TFT_TypeDef* restrict psLay
             s8Red1-=s8Red2;
             if(s8Blue1<0)
                 s8Blue1*=-1;
-            s8Blue1&=0x1F;
+            if(s8Blue1>0x1F)
+                s8Blue1=0x1F;
             if(s8Green1<0)
                 s8Green1*=-1;
-            s8Green1&=0x3F;
+            if(s8Green1>0x3F)
+                s8Green1=0x3F;
             if(s8Red1<0)
                 s8Red1*=-1;
-            s8Red1&=0x1F;
+            if(s8Red1>0x1F)
+                s8Red1=0x1F;
 
 
             u16Result=(uint16_t)(((uint16_t)s8Red1<<11)|((uint16_t)s8Green1<<5)|(uint16_t)s8Blue1);
@@ -2364,7 +2367,6 @@ IMAGPROC_nStatus IMAGEPROC__en16bSubtractionABS(LCDC_TFT_TypeDef* restrict psLay
 
     return IMAGPROC_enOK;
 }
-
 
 
 
@@ -2512,6 +2514,214 @@ IMAGPROC_nStatus IMAGEPROC__en16bSubtraction(LCDC_TFT_TypeDef* restrict psLayerS
     return IMAGPROC_enOK;
 }
 
+
+IMAGPROC_nStatus IMAGEPROC__en8bSubtraction(LCDC_TFT_TypeDef* restrict psLayerSource1,LCDC_TFT_TypeDef* restrict psLayerSource2, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
+{
+
+    register uint16_t u16Width=0,u16Height=0;
+    register uint32_t u32HeightSource1=0,u32HeightSource2=0,u32HeightDest=0;
+
+    register uint32_t u32LayerAddressDest;
+    register uint32_t u32LayerAddressSource1;
+    register uint32_t u32LayerAddressSource2;
+
+    register uint16_t u16DimX0=sDim.X[0];
+    register uint16_t u16DimX1=sDim.X[1];
+    register uint16_t u16DimX2=sDim.X[2];
+    register uint16_t u16DimY0=sDim.Y[0];
+    register uint16_t u16DimY1=sDim.Y[1];
+    register uint16_t u16DimY2=sDim.Y[2];
+
+    register uint32_t u32LayerSource1WidthTotal=psLayerSource1->layerWidthTotal;
+    register uint32_t u32LayerSource2WidthTotal=psLayerSource2->layerWidthTotal;
+    register uint32_t u32LayerSource1HeightTotal=psLayerSource1->layerHeightTotal;
+    register uint32_t u32LayerSource2HeightTotal=psLayerSource2->layerHeightTotal;
+
+    register uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
+    register uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
+
+    register uint16_t u16DimWidth=sDim.width;
+    register uint16_t u16DimHeight=sDim.height;
+
+    register int16_t s16Value = 0;
+    register uint8_t u8Value1 = 0;
+    register uint8_t u8Value2 = 0;
+    if((psLayerSource1->variableType != VARIABLETYPE_enUCHAR) || (psLayerSource2->variableType != VARIABLETYPE_enUCHAR)
+            || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
+            return IMAGPROC_enERROR;
+    if(u16DimX0>u32LayerSource1WidthTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimX1>u32LayerSource2WidthTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimX2>u32LayerDestWidthTotal)
+        return IMAGPROC_enERROR;
+
+    if(u16DimY0>u32LayerSource1HeightTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimY1>u32LayerSource2HeightTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimY2>u32LayerDestHeightTotal)
+        return IMAGPROC_enERROR;
+
+    if((u16DimWidth+ u16DimX0)>u32LayerSource1WidthTotal)
+        u16DimWidth= u32LayerSource1WidthTotal- u16DimX0;
+    if((u16DimHeight+ u16DimY0)>u32LayerSource1HeightTotal)
+        u16DimHeight= u32LayerSource1HeightTotal- u16DimY0;
+
+    if((u16DimWidth+ u16DimX1)>u32LayerSource2WidthTotal)
+        u16DimWidth= u32LayerSource2WidthTotal- u16DimX1;
+    if((u16DimHeight+ u16DimY1)>u32LayerSource2HeightTotal)
+        u16DimHeight= u32LayerSource2HeightTotal- u16DimY1;
+
+
+    if((u16DimWidth+ u16DimX2)>u32LayerDestWidthTotal)
+        u16DimWidth= u32LayerDestWidthTotal- u16DimX2;
+    if((u16DimHeight+ u16DimY2)>u32LayerDestHeightTotal)
+        u16DimHeight= u32LayerDestHeightTotal- u16DimY2;
+
+    Cache__vInvL2 (psLayerSource1->layerDataAddress, psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal);
+    Cache__vInvL2 (psLayerSource2->layerDataAddress, psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal);
+
+    u32HeightSource1=(u16DimY0)*u32LayerSource1WidthTotal+u16DimX0;
+    u32HeightSource2=(u16DimY1)*u32LayerSource2WidthTotal+u16DimX1;
+    u32HeightDest=(u16DimY2)*u32LayerDestWidthTotal+u16DimX2;
+
+    u32LayerAddressSource1=psLayerSource1->layerDataAddress+(u32HeightSource1<<1);
+    u32LayerAddressSource2=psLayerSource2->layerDataAddress+(u32HeightSource2<<1);
+    u32LayerAddressDest=psLayerDest->layerDataAddress+(u32HeightDest<<1);
+
+    for(u16Height=0;u16Height<u16DimHeight;u16Height++)
+    {
+        for(u16Width=0;u16Width<u16DimWidth;u16Width++)
+        {
+
+            u8Value1=*((uint8_t*)u32LayerAddressSource1+u16Width);
+            u8Value2=*((uint8_t*)u32LayerAddressSource2+u16Width);
+
+            s16Value=((int16_t)u8Value1-(int16_t)u8Value2);
+
+            if(s16Value<0)
+                s16Value=0;
+
+            if(s16Value>0xFF)
+                s16Value=0xFF;
+
+            *((uint8_t*)u32LayerAddressDest+u16Width)= (uint8_t)s16Value;
+
+        }
+        u32LayerAddressSource1+=u32LayerSource1WidthTotal<<1;
+        u32LayerAddressSource2+=u32LayerSource2WidthTotal<<1;
+        u32LayerAddressDest+=u32LayerDestWidthTotal<<1;
+    }
+
+    Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal);
+
+    return IMAGPROC_enOK;
+}
+
+
+IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* restrict psLayerSource1,LCDC_TFT_TypeDef* restrict psLayerSource2, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
+{
+
+    register uint16_t u16Width=0,u16Height=0;
+    register uint32_t u32HeightSource1=0,u32HeightSource2=0,u32HeightDest=0;
+
+    register uint32_t u32LayerAddressDest;
+    register uint32_t u32LayerAddressSource1;
+    register uint32_t u32LayerAddressSource2;
+
+    register uint16_t u16DimX0=sDim.X[0];
+    register uint16_t u16DimX1=sDim.X[1];
+    register uint16_t u16DimX2=sDim.X[2];
+    register uint16_t u16DimY0=sDim.Y[0];
+    register uint16_t u16DimY1=sDim.Y[1];
+    register uint16_t u16DimY2=sDim.Y[2];
+
+    register uint32_t u32LayerSource1WidthTotal=psLayerSource1->layerWidthTotal;
+    register uint32_t u32LayerSource2WidthTotal=psLayerSource2->layerWidthTotal;
+    register uint32_t u32LayerSource1HeightTotal=psLayerSource1->layerHeightTotal;
+    register uint32_t u32LayerSource2HeightTotal=psLayerSource2->layerHeightTotal;
+
+    register uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
+    register uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
+
+    register uint16_t u16DimWidth=sDim.width;
+    register uint16_t u16DimHeight=sDim.height;
+
+    register int16_t s16Value = 0;
+    register uint8_t u8Value1 = 0;
+    register uint8_t u8Value2 = 0;
+    if((psLayerSource1->variableType != VARIABLETYPE_enUCHAR) || (psLayerSource2->variableType != VARIABLETYPE_enUCHAR)
+            || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
+            return IMAGPROC_enERROR;
+    if(u16DimX0>u32LayerSource1WidthTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimX1>u32LayerSource2WidthTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimX2>u32LayerDestWidthTotal)
+        return IMAGPROC_enERROR;
+
+    if(u16DimY0>u32LayerSource1HeightTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimY1>u32LayerSource2HeightTotal)
+        return IMAGPROC_enERROR;
+    if(u16DimY2>u32LayerDestHeightTotal)
+        return IMAGPROC_enERROR;
+
+    if((u16DimWidth+ u16DimX0)>u32LayerSource1WidthTotal)
+        u16DimWidth= u32LayerSource1WidthTotal- u16DimX0;
+    if((u16DimHeight+ u16DimY0)>u32LayerSource1HeightTotal)
+        u16DimHeight= u32LayerSource1HeightTotal- u16DimY0;
+
+    if((u16DimWidth+ u16DimX1)>u32LayerSource2WidthTotal)
+        u16DimWidth= u32LayerSource2WidthTotal- u16DimX1;
+    if((u16DimHeight+ u16DimY1)>u32LayerSource2HeightTotal)
+        u16DimHeight= u32LayerSource2HeightTotal- u16DimY1;
+
+
+    if((u16DimWidth+ u16DimX2)>u32LayerDestWidthTotal)
+        u16DimWidth= u32LayerDestWidthTotal- u16DimX2;
+    if((u16DimHeight+ u16DimY2)>u32LayerDestHeightTotal)
+        u16DimHeight= u32LayerDestHeightTotal- u16DimY2;
+
+    Cache__vInvL2 (psLayerSource1->layerDataAddress, psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal);
+    Cache__vInvL2 (psLayerSource2->layerDataAddress, psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal);
+
+    u32HeightSource1=(u16DimY0)*u32LayerSource1WidthTotal+u16DimX0;
+    u32HeightSource2=(u16DimY1)*u32LayerSource2WidthTotal+u16DimX1;
+    u32HeightDest=(u16DimY2)*u32LayerDestWidthTotal+u16DimX2;
+
+    u32LayerAddressSource1=psLayerSource1->layerDataAddress+(u32HeightSource1<<1);
+    u32LayerAddressSource2=psLayerSource2->layerDataAddress+(u32HeightSource2<<1);
+    u32LayerAddressDest=psLayerDest->layerDataAddress+(u32HeightDest<<1);
+
+    for(u16Height=0;u16Height<u16DimHeight;u16Height++)
+    {
+        for(u16Width=0;u16Width<u16DimWidth;u16Width++)
+        {
+
+            u8Value1=*((uint8_t*)u32LayerAddressSource1+u16Width);
+            u8Value2=*((uint8_t*)u32LayerAddressSource2+u16Width);
+
+            s16Value=((int16_t)u8Value1-(int16_t)u8Value2);
+
+            if(s16Value<0)
+                s16Value*=-1;
+            if(s16Value>0xFF)
+                s16Value=0xFF;
+
+            *((uint8_t*)u32LayerAddressDest+u16Width)= (uint8_t)s16Value;
+
+        }
+        u32LayerAddressSource1+=u32LayerSource1WidthTotal<<1;
+        u32LayerAddressSource2+=u32LayerSource2WidthTotal<<1;
+        u32LayerAddressDest+=u32LayerDestWidthTotal<<1;
+    }
+
+    Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal);
+
+    return IMAGPROC_enOK;
+}
 
 
 IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* restrict psLayerSource1,LCDC_TFT_TypeDef* restrict psLayerSource2, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
