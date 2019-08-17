@@ -73,4 +73,6 @@ IMAGPROC_nStatus IMAGEPROC__en8bAddMeanConstant(LCDC_TFT_TypeDef* restrict psLay
 
 //todo consider HSI subtraction, addition, multipication and division
 
+
+
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */

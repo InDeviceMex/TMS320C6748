@@ -147,8 +147,8 @@ void LCDC__vInit(void)
     SYSCFG0_MSTPRI2->LCDC_ = 0; //Prioridad LCDC maxima-1
     SYSCFG0_MSTPRI1->VPIF_DMA_0 = 1; //Prioridad LCDC maxima-1
     SYSCFG0_MSTPRI1->VPIF_DMA_1 = 1; //Prioridad LCDC maxima-1
-    SYSCFG0_MSTPRI1->EDMA30TC0 = 2; //Prioridad DMA minima-1
-    SYSCFG0_MSTPRI1->EDMA30TC1 = 2; //Prioridad DMA minima-1
+    SYSCFG0_MSTPRI1->EDMA30TC0 = 1; //Prioridad DMA minima-1
+    SYSCFG0_MSTPRI1->EDMA30TC1 = 1; //Prioridad DMA minima-1
     SysTick__vDelayUs(10000);
 
     LCDC_RASTER_CTRL->RASTER_EN= 0;         // Turn raster controller off
@@ -2895,6 +2895,8 @@ uint32_t LCDC__u32Layer_StringSimpleBGType(LCDC_TFT_TypeDef* psLayerSource,LCDC_
     sDim.YInit=psLayerSource->layerBGYInit;
     sDim.width=psLayerSource->layerWidth*psLayerSource->layerFont->width;
     sDim.height=psLayerSource->layerHeight*(psLayerSource->layerFont->height);
+
+    LCDC__vLayer_Print_RectanguleFill(psLayerDest,sDim,psLayerSource->layerColorBG);
     return LCDC__u32Layer_Print_StringBG(psLayerDest,sDim,&sCoord,psLayerSource->layerString,psLayerSource->layerColorFont,psLayerSource->layerColorBG,psLayerSource->layerFont);
 }
 
@@ -2915,7 +2917,7 @@ int32_t LCDC__s32Layer_ConvString( char* restrict pcStringIn,char* restrict pcSt
 
 uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...)
 {
-    volatile int32_t s32Count=0;//variable usada para saber cuantos caracteres se mandaron a la LCD
+    volatile int32_t s32Count=0,s32Aux=0;//variable usada para saber cuantos caracteres se mandaron a la LCD
 
     va_list ap; //crea puntero de los argumentos
     double valueARGd; //variable donde guardara el valor del argumento
@@ -2939,45 +2941,52 @@ uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...)
                 case 'i':
                     valueARGi=(int32_t)va_arg(ap, int32_t);
                     CONV__u8IntToString((int64_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
                 case 'u':// "%u"
                     valueARGi=(uint32_t)va_arg(ap, uint32_t);
                     CONV__u8UIntToString((uint32_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
                 case 'x': //"%x"
                     valueARGi=(uint32_t)va_arg(ap, uint32_t);
                     CONV__u8HexToString((uint32_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
                 case 'X':// "%X"
                     valueARGi=(uint32_t)va_arg(ap, uint32_t);
                     CONV__u8HEXToString((uint32_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
                 case 'o': //"%o"
                     valueARGi=(uint32_t)va_arg(ap, uint32_t);
                     CONV__u8OctToString((uint32_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
                case 'p': //"%p"
                     valueARGcl=(void*)va_arg(ap, void*);
                     valueARGclAux=(uint32_t)valueARGcl;
                     CONV__u8BinToString((uint64_t)valueARGclAux,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                         break;
                 case 'f': //"%f"
                     valueARGd=(double)va_arg(ap, double);
                     CONV__u8FloatToString((double)(float)valueARGd,0,0,1,3,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
 
 
@@ -2989,8 +2998,9 @@ uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...)
                     break;
                 case 's':// "%s"
                     valueARGc=(char*)va_arg(ap,char*);  //el siguiente argumento es un puntero
-                    s32Count+=LCDC__s32Layer_ConvString((char*)valueARGc,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString((char*)valueARGc,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break;
                 case 'l'://"%lf" "%8.4lf" "%5.3f" "%l"
                     pcStringIn++; //aumenta en uno la posicion del pcString
@@ -2998,8 +3008,9 @@ uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...)
                     {
                         valueARGd=(double)va_arg(ap, double);
                         CONV__u8FloatToString((double)valueARGd,0,0,1,5,conversion);
-                        s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                        pcStringOut+=s32Count;
+                        s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                        s32Count+=s32Aux;
+                        pcStringOut+=s32Aux;
                         break; //break de este caso
                     }
                     if(*pcStringIn=='l' ) //si es 'f' el sig caracter significa que vamos a convertir un double
@@ -3009,16 +3020,18 @@ uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...)
                           {
                           valueARGii=(int64_t)va_arg(ap, int64_t);
                           CONV__u8IntToString((int64_t)valueARGii,conversion);
-                          s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                          pcStringOut+=s32Count;
+                          s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                          s32Count+=s32Aux;
+                          pcStringOut+=s32Aux;
                           break; //break de este caso
                           }
                         if(*pcStringIn=='u' ) //si es 'f' el sig caracter significa que vamos a convertir un double
                           {
                           valueARGuu=(uint64_t)va_arg(ap, uint64_t);
                           CONV__u8UIntToString((uint64_t)valueARGuu,conversion);
-                          s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                          pcStringOut+=s32Count;
+                          s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                          s32Count+=s32Aux;
+                          pcStringOut+=s32Aux;
                           break; //break de este caso
                           }
                     }
@@ -3026,16 +3039,18 @@ uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...)
                     {
                     valueARGi=(int32_t)va_arg(ap, int32_t);
                     CONV__u8IntToString((int32_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break; //break de este caso
                     }
                     if(*pcStringIn=='u' ) //si es 'f' el sig caracter significa que vamos a convertir un double
                     {
                     valueARGi=(uint32_t)va_arg(ap, uint32_t);
                     CONV__u8IntToString((uint32_t)valueARGi,conversion);
-                    s32Count+=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
-                    pcStringOut+=s32Count;
+                    s32Aux=LCDC__s32Layer_ConvString(conversion,pcStringOut)-1;
+                    s32Count+=s32Aux;
+                    pcStringOut+=s32Aux;
                     break; //break de este caso
                     }
                     else

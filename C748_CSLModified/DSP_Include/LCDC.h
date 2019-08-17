@@ -1402,5 +1402,5 @@ uint32_t LCDC__u32Layer_Print_StringBG(LCDC_TFT_TypeDef* psLayer,LCDC_DIMENSIONS
 uint32_t LCDC__u32Layer_StringSimpleBGType(LCDC_TFT_TypeDef* psLayerSource,LCDC_TFT_TypeDef* psLayerDest);
 
 
-uint64_t LTDC__u64Layer_Printf(char* pcStringIn,char* pcStringOut,...);
+uint64_t LTDC__u64Layer_Printf(char* restrict pcStringIn,char* restrict pcStringOut,...);
 #endif /* DSP_INCLUDE_LCDC_H_ */
