@@ -49,8 +49,8 @@ volatile uint16_t MAIN__u16ProcessingBuffer2[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer3[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer4[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer5[CAMERA_HEIGHT][CAMERA_WIDTH];
-volatile uint16_t MAIN__u16ProcessingBuffer6[179][280];
-volatile uint16_t MAIN__u16ProcessingBuffer7[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer6[120][76];
+volatile uint16_t MAIN__u16ProcessingBuffer7[120][76];
 volatile uint8_t MAIN__u8ProcessingBuffer8[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer9[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer10[CAMERA_HEIGHT][CAMERA_WIDTH];
@@ -59,7 +59,7 @@ volatile float MAIN__fProcessingBuffer12[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile float MAIN__fProcessingBuffer13[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 
-uint64_t u64CountOld=0,u64CountNew=0;
+float fCountOld=0,fCountNew=0;
 
 char     MAIN_cStringBG[30];
 uint16_t MAIN_u16LayerBG_BGX[2]={0};
@@ -151,6 +151,8 @@ char MAIN_cSubLayer2BG_String[60]="Image Original";
 char MAIN_cSubLayer4BG_String[60]="Image GrayScale";
 char MAIN_cSubLayer6BG_String[60]="Image Add";
 char MAIN_cTime_String[60]="Time:";
+char MAIN_cTime1_String[60]="Time:";
+char MAIN_cTime2_String[60]="Time:";
 uint8_t pu8ValueMemory[102];
 uint8_t pu8ReadMemory[100];
 
@@ -205,69 +207,70 @@ int main(void)
     MAIN_sSubLayerBG_Generic[0].layerDataAddress=(uint32_t)&MAIN__u16CameraBuffer;
     MAIN_sSubLayerBG_Generic[0].layerXInit=0;
     MAIN_sSubLayerBG_Generic[0].layerYInit=0;
-    MAIN_sSubLayerBG_Generic[0].layerBGXInit=0;
-    MAIN_sSubLayerBG_Generic[0].layerBGYInit=0;
+    MAIN_sSubLayerBG_Generic[0].layerBGXInit=5;
+    MAIN_sSubLayerBG_Generic[0].layerBGYInit=5;
     MAIN_sSubLayerBG_Generic[0].layerWidthTotal=CAMERA_WIDTH;
     MAIN_sSubLayerBG_Generic[0].layerHeightTotal=CAMERA_HEIGHT;
     MAIN_sSubLayerBG_Generic[0].layerWidth=CAMERA_WIDTH;
     MAIN_sSubLayerBG_Generic[0].layerHeight=CAMERA_HEIGHT;
     MAIN_sSubLayerBG_Generic[0].variableType=VARIABLETYPE_enUSHORT;
     MAIN_sLayerBG_Number[0]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[0]);
-
-    MAIN_sSubLayerBG_Generic[1].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[1].layerFont=&FONT_s16x24;
-    MAIN_sSubLayerBG_Generic[1].layerColorFont=COLORS_enYELLOW;
-    MAIN_sSubLayerBG_Generic[1].layerString="Procesamiento Basico";
-    MAIN_sSubLayerBG_Generic[1].layerBGXInit=(640-(20*16))/2;
-    MAIN_sSubLayerBG_Generic[1].layerBGYInit=280;
-    MAIN_sSubLayerBG_Generic[1].layerWidth=20;
-    MAIN_sSubLayerBG_Generic[1].layerHeight=1;
-    MAIN_sLayerBG_Number[1]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[1]);
-    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[1]);
-    LCDC__enLayerBG_RefreshSubLayer(1);
+    SysTick__vDelayUs(5000);
 
     MAIN_sSubLayerBG_Generic[2].layerType=LAYER_TYPE_enSTRING_SIMPLE;
     MAIN_sSubLayerBG_Generic[2].layerFont=&FONT_s16x24;
     MAIN_sSubLayerBG_Generic[2].layerColorFont=COLORS_enYELLOW;
     MAIN_sSubLayerBG_Generic[2].layerString="#InDeviceMex";
-    MAIN_sSubLayerBG_Generic[2].layerBGXInit=(640-(11*16))/2;
-    MAIN_sSubLayerBG_Generic[2].layerBGYInit=390;
+    MAIN_sSubLayerBG_Generic[2].layerBGXInit=(640-(12*MAIN_sSubLayerBG_Generic[2].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[2].layerBGYInit=420;
     MAIN_sSubLayerBG_Generic[2].layerWidth=12;
     MAIN_sSubLayerBG_Generic[2].layerHeight=1;
     MAIN_sLayerBG_Number[2]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[2]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[2]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
+    MAIN_sSubLayerBG_Generic[1].layerType=LAYER_TYPE_enSTRING_SIMPLE;
+    MAIN_sSubLayerBG_Generic[1].layerFont=&FONT_s16x24;
+    MAIN_sSubLayerBG_Generic[1].layerColorFont=COLORS_enYELLOW;
+    MAIN_sSubLayerBG_Generic[1].layerString="Procesamiento Basico";
+    MAIN_sSubLayerBG_Generic[1].layerBGXInit=(640-(20*MAIN_sSubLayerBG_Generic[1].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[1].layerBGYInit=383;
+    MAIN_sSubLayerBG_Generic[1].layerWidth=20;
+    MAIN_sSubLayerBG_Generic[1].layerHeight=1;
+    MAIN_sLayerBG_Number[1]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[1]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[1]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
     MAIN_sSubLayerBG_Generic[3].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[3].layerFont=&FONT_s16x24;
+    MAIN_sSubLayerBG_Generic[3].layerFont=&FONT_s11x16;
     MAIN_sSubLayerBG_Generic[3].layerColorFont=COLORS_enYELLOW;
     MAIN_sSubLayerBG_Generic[3].layerString="Eduardo Alvarez Lopez";
-    MAIN_sSubLayerBG_Generic[3].layerBGXInit=(640-(21*16))/2;
-    MAIN_sSubLayerBG_Generic[3].layerBGYInit=390+25;
-    MAIN_sSubLayerBG_Generic[3].layerWidth=22;
+    MAIN_sSubLayerBG_Generic[3].layerBGXInit=(640-(21*MAIN_sSubLayerBG_Generic[3].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[3].layerBGYInit=442;
+    MAIN_sSubLayerBG_Generic[3].layerWidth=21;
     MAIN_sSubLayerBG_Generic[3].layerHeight=1;
     MAIN_sLayerBG_Number[3]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[3]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[3]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
     MAIN_sSubLayerBG_Generic[4].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[4].layerFont=&FONT_s11x16;
+    MAIN_sSubLayerBG_Generic[4].layerFont=&FONT_s8x16_MS_Gothic;
     MAIN_sSubLayerBG_Generic[4].layerColorFont=COLORS_enYELLOW;
     MAIN_sSubLayerBG_Generic[4].layerString="Procesamiento Digital de Imagenes";
-    MAIN_sSubLayerBG_Generic[4].layerBGXInit=(640-(34*11))/2;
-    MAIN_sSubLayerBG_Generic[4].layerBGYInit=390+50;
-    MAIN_sSubLayerBG_Generic[4].layerWidth=34;
+    MAIN_sSubLayerBG_Generic[4].layerBGXInit=(640-(33*MAIN_sSubLayerBG_Generic[4].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[4].layerBGYInit=459;
+    MAIN_sSubLayerBG_Generic[4].layerWidth=33;
     MAIN_sSubLayerBG_Generic[4].layerHeight=1;
     MAIN_sLayerBG_Number[4]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[4]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[4]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
     MAIN_sSubLayerBG_Generic[5].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[5].layerFont=&FONT_s11x16;
+    MAIN_sSubLayerBG_Generic[5].layerFont=&FONT_s8x16_MS_Gothic;
     MAIN_sSubLayerBG_Generic[5].layerColorFont=COLORS_enYELLOW;
     MAIN_sSubLayerBG_Generic[5].layerString="Peripheral:";
     MAIN_sSubLayerBG_Generic[5].layerBGXInit=10;
-    MAIN_sSubLayerBG_Generic[5].layerBGYInit=300;
+    MAIN_sSubLayerBG_Generic[5].layerBGYInit=400;
     MAIN_sSubLayerBG_Generic[5].layerWidth=11;
     MAIN_sSubLayerBG_Generic[5].layerHeight=1;
     MAIN_sLayerBG_Number[5]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[5]);
@@ -275,23 +278,23 @@ int main(void)
     LCDC__enLayerBG_RefreshSubLayer(1);
 
     MAIN_sSubLayerBG_Generic[6].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[6].layerFont=&FONT_s8x16;
+    MAIN_sSubLayerBG_Generic[6].layerFont=&FONT_s8x8;
     MAIN_sSubLayerBG_Generic[6].layerColorFont=COLORS_enYELLOW;
-    MAIN_sSubLayerBG_Generic[6].layerString="CPU: 400 MHz\n\rDDR2: 300 MHz\n\rVPIF\n\rLTDC: 640x480";
+    MAIN_sSubLayerBG_Generic[6].layerString="CPU: 400 MHz\n\r\n\rDDR2: 300 MHz\n\r\n\rVPIF\n\r\n\rLTDC: 640x480";
     MAIN_sSubLayerBG_Generic[6].layerBGXInit=20;
-    MAIN_sSubLayerBG_Generic[6].layerBGYInit=320;
-    MAIN_sSubLayerBG_Generic[6].layerWidth=13;
-    MAIN_sSubLayerBG_Generic[6].layerHeight=4;
+    MAIN_sSubLayerBG_Generic[6].layerBGYInit=420;
+    MAIN_sSubLayerBG_Generic[6].layerWidth=15;
+    MAIN_sSubLayerBG_Generic[6].layerHeight=6;
     MAIN_sLayerBG_Number[6]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[6]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[6]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
     MAIN_sSubLayerBG_Generic[7].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[7].layerFont=&FONT_s11x16;
+    MAIN_sSubLayerBG_Generic[7].layerFont=&FONT_s8x16_MS_Gothic;
     MAIN_sSubLayerBG_Generic[7].layerColorFont=COLORS_enYELLOW;
     MAIN_sSubLayerBG_Generic[7].layerString="Hardware: RK6748";
-    MAIN_sSubLayerBG_Generic[7].layerBGXInit=460;
-    MAIN_sSubLayerBG_Generic[7].layerBGYInit=300;
+    MAIN_sSubLayerBG_Generic[7].layerBGXInit=470;
+    MAIN_sSubLayerBG_Generic[7].layerBGYInit=410;
     MAIN_sSubLayerBG_Generic[7].layerWidth=16;
     MAIN_sSubLayerBG_Generic[7].layerHeight=1;
     MAIN_sLayerBG_Number[7]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[7]);
@@ -299,20 +302,20 @@ int main(void)
     LCDC__enLayerBG_RefreshSubLayer(1);
 
     MAIN_sSubLayerBG_Generic[8].layerType=LAYER_TYPE_enSTRING_SIMPLE;
-    MAIN_sSubLayerBG_Generic[8].layerFont=&FONT_s8x16;
+    MAIN_sSubLayerBG_Generic[8].layerFont=&FONT_s8x8;
     MAIN_sSubLayerBG_Generic[8].layerColorFont=COLORS_enYELLOW;
-    MAIN_sSubLayerBG_Generic[8].layerString="TMS320C6748 DSP TI\n\rOV9655\n\rAT056TN53 5.6\"";
+    MAIN_sSubLayerBG_Generic[8].layerString="TMS320C6748 DSP TI\n\r\n\rOV9655\n\r\n\rAT056TN53 5.6\"";
     MAIN_sSubLayerBG_Generic[8].layerBGXInit=480;
-    MAIN_sSubLayerBG_Generic[8].layerBGYInit=320;
+    MAIN_sSubLayerBG_Generic[8].layerBGYInit=430;
     MAIN_sSubLayerBG_Generic[8].layerWidth=19;
-    MAIN_sSubLayerBG_Generic[8].layerHeight=3;
+    MAIN_sSubLayerBG_Generic[8].layerHeight=5;
     MAIN_sLayerBG_Number[8]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[8]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[8]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
 
     MAIN_sSubLayerBG_Generic[9].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
-    MAIN_sSubLayerBG_Generic[9].layerFont=&FONT_s8x16;
+    MAIN_sSubLayerBG_Generic[9].layerFont=&FONT_s8x8;
     MAIN_sSubLayerBG_Generic[9].layerColorFont=COLORS_enYELLOW;
     MAIN_sSubLayerBG_Generic[9].layerColorBG=COLORS_enPURPLE;
     MAIN_sSubLayerBG_Generic[9].layerString=MAIN_cTime_String;
@@ -322,6 +325,117 @@ int main(void)
     MAIN_sSubLayerBG_Generic[9].layerHeight=1;
     MAIN_sLayerBG_Number[9]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[9]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[9]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
+
+    MAIN_sSubLayerBG_Generic[10].layerType=LAYER_TYPE_enRECTANGLE_FILL;
+    MAIN_sSubLayerBG_Generic[10].layerColorBG=COLORS_enORANGE;
+    MAIN_sSubLayerBG_Generic[10].layerBGXInit=0;
+    MAIN_sSubLayerBG_Generic[10].layerBGYInit=0;
+    MAIN_sSubLayerBG_Generic[10].layerWidth=640;
+    MAIN_sSubLayerBG_Generic[10].layerHeight=130;
+    MAIN_sLayerBG_Number[10]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[10]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[10]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
+
+
+    MAIN_sSubLayerBG_Generic[11].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
+    MAIN_sSubLayerBG_Generic[11].layerFont=&FONT_s8x8;
+    MAIN_sSubLayerBG_Generic[11].layerColorFont=COLORS_enYELLOW;
+    MAIN_sSubLayerBG_Generic[11].layerColorBG=COLORS_enPURPLE;
+    MAIN_sSubLayerBG_Generic[11].layerString="[Image Cam]";
+    MAIN_sSubLayerBG_Generic[11].layerBGXInit=(120-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[11].layerBGYInit=132;
+    MAIN_sSubLayerBG_Generic[11].layerWidth=11;
+    MAIN_sSubLayerBG_Generic[11].layerHeight=1;
+    MAIN_sLayerBG_Number[11]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[11]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
+
+    MAIN_sSubLayerBG_Generic[12].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[12].layerDataAddress=(uint32_t)&gImage_del;
+    MAIN_sSubLayerBG_Generic[12].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[12].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[12].layerBGXInit=120+5+5;
+    MAIN_sSubLayerBG_Generic[12].layerBGYInit=27;
+    MAIN_sSubLayerBG_Generic[12].layerWidthTotal=120;
+    MAIN_sSubLayerBG_Generic[12].layerHeightTotal=76;
+    MAIN_sSubLayerBG_Generic[12].layerWidth=120;
+    MAIN_sSubLayerBG_Generic[12].layerHeight=76;
+    MAIN_sSubLayerBG_Generic[12].variableType=VARIABLETYPE_enUSHORT;
+    MAIN_sLayerBG_Number[12]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[12]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[12]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
+
+    MAIN_sSubLayerBG_Generic[13].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[13].layerDataAddress=(uint32_t)&gImage_bic;
+    MAIN_sSubLayerBG_Generic[13].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[13].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[13].layerBGXInit=120+5+5+120+5;
+    MAIN_sSubLayerBG_Generic[13].layerBGYInit=27;
+    MAIN_sSubLayerBG_Generic[13].layerWidthTotal=120;
+    MAIN_sSubLayerBG_Generic[13].layerHeightTotal=76;
+    MAIN_sSubLayerBG_Generic[13].layerWidth=120;
+    MAIN_sSubLayerBG_Generic[13].layerHeight=76;
+    MAIN_sSubLayerBG_Generic[13].variableType=VARIABLETYPE_enUSHORT;
+    MAIN_sLayerBG_Number[13]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[13]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[13]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
+
+    MAIN_sSubLayerBG_Generic[14].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[14].layerDataAddress=(uint32_t)&MAIN__u16ProcessingBuffer6;
+    MAIN_sSubLayerBG_Generic[14].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[14].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[14].layerBGXInit=120+5+5+120+5+120+5;
+    MAIN_sSubLayerBG_Generic[14].layerBGYInit=27;
+    MAIN_sSubLayerBG_Generic[14].layerWidthTotal=120;
+    MAIN_sSubLayerBG_Generic[14].layerHeightTotal=76;
+    MAIN_sSubLayerBG_Generic[14].layerWidth=120;
+    MAIN_sSubLayerBG_Generic[14].layerHeight=76;
+    MAIN_sSubLayerBG_Generic[14].variableType=VARIABLETYPE_enUSHORT;
+    MAIN_sLayerBG_Number[14]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[14]);
+
+    MAIN_sSubLayerBG_Generic[15].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[15].layerDataAddress=(uint32_t)&MAIN__u16ProcessingBuffer7;
+    MAIN_sSubLayerBG_Generic[15].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[15].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[15].layerBGXInit=120+5+5+120+5+120+5+120+5;
+    MAIN_sSubLayerBG_Generic[15].layerBGYInit=27;
+    MAIN_sSubLayerBG_Generic[15].layerWidthTotal=120;
+    MAIN_sSubLayerBG_Generic[15].layerHeightTotal=76;
+    MAIN_sSubLayerBG_Generic[15].layerWidth=120;
+    MAIN_sSubLayerBG_Generic[15].layerHeight=76;
+    MAIN_sSubLayerBG_Generic[15].variableType=VARIABLETYPE_enUSHORT;
+    MAIN_sLayerBG_Number[15]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[15]);
+
+    MAIN_sSubLayerBG_Generic[16].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
+    MAIN_sSubLayerBG_Generic[16].layerFont=&FONT_s8x8;
+    MAIN_sSubLayerBG_Generic[16].layerColorFont=COLORS_enYELLOW;
+    MAIN_sSubLayerBG_Generic[16].layerColorBG=COLORS_enPURPLE;
+    MAIN_sSubLayerBG_Generic[16].layerString=MAIN_cTime1_String;
+    MAIN_sSubLayerBG_Generic[16].layerBGXInit=360+20;
+    MAIN_sSubLayerBG_Generic[16].layerBGYInit=150;
+    MAIN_sSubLayerBG_Generic[16].layerWidth=15;
+    MAIN_sSubLayerBG_Generic[16].layerHeight=1;
+    MAIN_sLayerBG_Number[16]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[16]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
+    LCDC__enLayerBG_RefreshSubLayer(1);
+
+    MAIN_sSubLayerBG_Generic[17].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
+    MAIN_sSubLayerBG_Generic[17].layerFont=&FONT_s8x8;
+    MAIN_sSubLayerBG_Generic[17].layerColorFont=COLORS_enYELLOW;
+    MAIN_sSubLayerBG_Generic[17].layerColorBG=COLORS_enPURPLE;
+    MAIN_sSubLayerBG_Generic[17].layerString=MAIN_cTime2_String;
+    MAIN_sSubLayerBG_Generic[17].layerBGXInit=480+25;
+    MAIN_sSubLayerBG_Generic[17].layerBGYInit=150;
+    MAIN_sSubLayerBG_Generic[17].layerWidth=15;
+    MAIN_sSubLayerBG_Generic[17].layerHeight=1;
+    MAIN_sLayerBG_Number[17]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[17]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
 
@@ -348,29 +462,51 @@ int main(void)
     DimProcessing2.Y[0]=0;
     DimProcessing2.Y[1]=0;
     DimProcessing2.Y[2]=0;
-    DimProcessing2.width=280;
-    DimProcessing2.height=179;
+    DimProcessing2.width=120;
+    DimProcessing2.height=176;
 
     LCDC__vBackLight(BACKLIGHT_enON);
 
     while(1)
     {
         u8State[1]++;
-        if(u8State[0]>0)
+      /*  if(u8State[0]>0)
         {
             LCDC__enLayer_Copy(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
             IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[15],&MAIN_sSubLayerBG_Generic[16],DimProcessing);
             u8State[0]=0;
         }
+        */
+        fCountOld=SysTick__fGetTimeUs();
+        IMAGEPROC__en16bSubtraction(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[14],DimProcessing2);
+        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
+        fCountNew=SysTick__fGetTimeUs();
+        if((u8State[1]&0x7F)==0)
+        {
+        fCountOld=(fCountNew-fCountOld);
+        LTDC__u64Layer_Printf("Time: %d us",MAIN_cTime1_String,(uint32_t)fCountOld);
+        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
+        }
 
-        u64CountOld=SysTick__u64GetCount();
+        fCountOld=SysTick__fGetTimeUs();
+        IMAGEPROC__en16bSubtractionABS(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
+        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[15]);
+        fCountNew=SysTick__fGetTimeUs();
+        if((u8State[1]&0x7F)==0)
+        {
+        fCountOld=(fCountNew-fCountOld);
+        LTDC__u64Layer_Printf("Time: %d us",MAIN_cTime2_String,(uint32_t)fCountOld);
+        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
+        }
+
+        fCountOld=SysTick__fGetTimeUs();
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[0]);
 
-        u64CountNew=SysTick__u64GetCount();
-        if((u8State[1]%40)==0)
+        fCountNew=SysTick__fGetTimeUs();
+        if((u8State[1]&0x7F)==0)
         {
-        u64CountOld=(u64CountNew-u64CountOld);
-        LTDC__u64Layer_Printf("Time: %d us",MAIN_cTime_String,(uint64_t)u64CountOld);
+        fCountOld=(fCountNew-fCountOld);
+        LTDC__u64Layer_Printf("Time: %d us",MAIN_cTime_String,(uint32_t)fCountOld);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[9]);
         }
         LCDC__enLayerBG_RefreshSubLayer(1);

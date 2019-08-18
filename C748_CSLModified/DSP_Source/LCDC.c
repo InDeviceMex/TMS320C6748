@@ -2796,7 +2796,7 @@ uint32_t LCDC__u32Layer_Print_String(LCDC_TFT_TypeDef* psLayer,LCDC_DIMENSIONS_T
 
          {
          case '\n':
-             sDimensions.YInit=sCoord->Y+sFontType->height;
+             sDimensions.YInit+=sFontType->height;
              if((sDimensions.YInit-sDim.YInit)>(sDim.height))
                  return u32CharCounter;
              break;

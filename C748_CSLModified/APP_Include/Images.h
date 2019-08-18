@@ -9,8 +9,8 @@
 #define APP_INCLUDE_IMAGES_H_
 
 #include "stdint.h"
-extern const uint8_t gImage_del[100240];
-extern const uint8_t gImage_bic[100240];
+extern const uint8_t gImage_del[18240];
+extern const uint8_t gImage_bic[18240] ;
 extern const uint8_t gImage_comic[614400];
 extern const uint8_t gImage_atackontitan[614400] ;
 extern const uint8_t gImage_kurapica[614400];
