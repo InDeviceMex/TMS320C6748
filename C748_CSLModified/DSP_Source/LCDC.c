@@ -11,7 +11,7 @@
 int32_t LCDC__s32Layer_ConvString( char* pcStringIn,char* pcStringOut);
 
 #pragma DATA_SECTION(LCDC_sLayerBGBuffer, ".MyData")
-#pragma DATA_ALIGN(LCDC_sLayerBGBuffer, 1024*1024)
+#pragma DATA_ALIGN(LCDC_sLayerBGBuffer, 1024)
 volatile LCDC_Frame_TypeDef LCDC_sLayerBGBuffer;
 uint16_t LCDC_u16LayerBGPosInitBGX[2]={0};//{(1024-640)/2,0};
 uint16_t LCDC_u16LayerBGPosInitBGY[2]={0};//{(600-480)/2,0};
@@ -1629,12 +1629,15 @@ Lcdc_nStatus LCDC__enLayer_Copy (LCDC_TFT_TypeDef* restrict psLayerSource,LCDC_T
 {
     uint32_t u32TimeOut=LCDC_TIMEOUTQDMA;
     uint32_t u32SourceAddress, u32DestAddress;
+    uint8_t u8MultSource=1, u8MultDest=1;
     uint32_t u32SourceWidthTotal, u32DestWidthTotal;
     uint32_t u32SourceHeightTotal, u32DestHeightTotal;
     u32SourceWidthTotal=psLayerSource->layerWidthTotal;
     u32DestWidthTotal=psLayerDest->layerWidthTotal;
     u32SourceHeightTotal=psLayerSource->layerHeightTotal;
     u32DestHeightTotal=psLayerDest->layerHeightTotal;
+
+
 
     if(sDim.X[0]>u32SourceWidthTotal)
         return LCDC_enERROR;
@@ -1655,8 +1658,16 @@ Lcdc_nStatus LCDC__enLayer_Copy (LCDC_TFT_TypeDef* restrict psLayerSource,LCDC_T
     if((sDim.height+ sDim.Y[1])>u32DestHeightTotal)
         sDim.height= u32DestHeightTotal- sDim.Y[1];
 
-    u32SourceAddress=psLayerSource->layerDataAddress+((u32SourceWidthTotal*sDim.Y[0]+sDim.X[0])*2);
-    u32DestAddress=psLayerDest->layerDataAddress+((u32DestWidthTotal*sDim.Y[1]+sDim.X[1])*2);
+    if(psLayerSource->variableType == VARIABLETYPE_enUSHORT )
+    {
+        u8MultSource=2;
+    }
+    if(psLayerDest->variableType == VARIABLETYPE_enUSHORT)
+    {
+        u8MultDest=2;
+    }
+    u32SourceAddress=psLayerSource->layerDataAddress+((u32SourceWidthTotal*sDim.Y[0]+sDim.X[0])*u8MultSource);
+    u32DestAddress=psLayerDest->layerDataAddress+((u32DestWidthTotal*sDim.Y[1]+sDim.X[1])*u8MultDest);
 
     EDMA3_0_CC0_PaRAM->PaRAM[127].OPT=0;
     EDMA3_0_CC0_PaRAM->PaRAM[127].OPT_Bit.TCC=31;
@@ -1668,11 +1679,11 @@ Lcdc_nStatus LCDC__enLayer_Copy (LCDC_TFT_TypeDef* restrict psLayerSource,LCDC_T
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.LINK=((uint32_t)(EDMA3_0_CC0_PaRAM->PaRAM)+126*8*4)&0xFFFF;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC=(uint32_t)u32SourceAddress;
     EDMA3_0_CC0_PaRAM->PaRAM[127].DST=(uint32_t)u32DestAddress;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=sDim.width*2;//
+    EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=sDim.width*u8MultSource;//
     EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.BCNT=sDim.height;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_CIDX=0;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.DSTBIDX=u32DestWidthTotal*2;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.SRCBIDX=u32SourceWidthTotal*2;//-psLayer->layerWidthTotal;
+    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.DSTBIDX=u32DestWidthTotal*u8MultDest;
+    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.SRCBIDX=u32SourceWidthTotal*u8MultSource;//-psLayer->layerWidthTotal;
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.BCNTRLD=0;
     EDMA3_0_CC0_INTERRUPT->ICR|=0x80000000;
     EDMA3_0_CC0_PaRAM->PaRAM[127].CCNT=1;
