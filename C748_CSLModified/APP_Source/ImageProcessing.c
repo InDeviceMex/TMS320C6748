@@ -714,11 +714,11 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleBlue(LCDC_TFT_TypeDef * re
 
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef *restrict psLayerSource, LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim)
 {
-    register uint16_t u16Width=0,u16Height=0;
-    register uint32_t u32HeightSource=0,u32HeightDest=0;
 
-    register uint32_t u32LayerAddressSource;
-    register uint32_t psLayerAddressDest;
+    LCDC_TFT_TypeDef sLayer;
+    LCDC_DIMENSIONS_TypeDef sDimLayer;
+    register uint32_t u32Index=0;
+
     register uint8_t u8Red = 0;
     register uint8_t u8Green = 0;
     register uint8_t u8Blue = 0;
@@ -759,22 +759,33 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef *restrict
     if((u16DimHeight+ u16DimY1)>psLayerDestHeightTotal)
         u16DimHeight= psLayerDestHeightTotal- u16DimY1;
 
+    Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
 
-    Cache__vInvL2 (psLayerSource->layerDataAddress, psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
+    uint16_t* restrict pu8LayerSource =(uint16_t *) memalign(4,sizeof(uint16_t)*u16DimWidth*u16DimHeight+8);
+    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight+8);
 
-    u32HeightSource=(u16DimY0)*psLayerSourceWidthTotal+u16DimX0;
-    u32HeightDest=(u16DimY1)*psLayerDestWidthTotal+u16DimX1;
 
-    u32LayerAddressSource=psLayerSource->layerDataAddress+(u32HeightSource<<1);
-    psLayerAddressDest=psLayerDest->layerDataAddress+(u32HeightDest);
+    Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight*2);
+    sLayer.layerWidthTotal=u16DimWidth;
+    sLayer.layerHeightTotal=u16DimHeight;
+    sDimLayer.width=u16DimWidth;
+    sDimLayer.height=u16DimHeight;
+
+    sDimLayer.X[1]=0;
+    sDimLayer.Y[1]=0;
+    sDimLayer.X[0]=u16DimX0;
+    sDimLayer.Y[0]=u16DimY0;
+    sLayer.variableType=VARIABLETYPE_enUSHORT;
+    sLayer.layerDataAddress=(uint32_t)pu8LayerSource;
+    LCDC__enLayer_Copy(psLayerSource,&sLayer,sDimLayer);
+
+    _nassert((int)(pu8LayerSource)  == 0);
+    _nassert((int)(pu8LayerDest)  == 0);
     #pragma UNROLL(4)
-    for(u16Height=0;u16Height<u16DimHeight;u16Height++)
+    for(u32Index=0;u32Index<(u16DimHeight*u16DimWidth);u32Index++)
     {
-        #pragma UNROLL(8)
-        for(u16Width=0;u16Width<u16DimWidth;u16Width++)
-        {
 
-            u16Aux=*((uint16_t*)u32LayerAddressSource+u16Width);
+            u16Aux=*((uint16_t*)pu8LayerSource+u32Index);
             u8Red=(uint8_t)((uint16_t)(u16Aux&0xF800)>>10)&0x3F;
             u8Green=(uint8_t)((uint16_t)(u16Aux&0x07E0)>>5)&0x3F;
             u8Blue=(uint8_t)((uint16_t)u16Aux<<1)&0x3F;
@@ -784,12 +795,21 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef *restrict
             u8Add+=u8Blue;
             u8Add/=3;
             u8Add<<=2;
-            *((uint8_t*)psLayerAddressDest+u16Width)= u8Add;
-        }
-        u32LayerAddressSource+=psLayerSourceWidthTotal<<1;
-        psLayerAddressDest+=psLayerDestWidthTotal;
+            *((uint8_t*)pu8LayerDest+u32Index)= u8Add;
+
     }
-    Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal);
+    Cache__vWbL2 ((uint32_t)pu8LayerDest, u16DimHeight*u16DimWidth);
+
+    sLayer.variableType=VARIABLETYPE_enUCHAR;
+    sDimLayer.X[1]=u16DimX1;
+    sDimLayer.Y[1]=u16DimY1;
+    sDimLayer.X[0]=0;
+    sDimLayer.Y[0]=0;
+    sLayer.layerDataAddress=(uint32_t)pu8LayerDest;
+    LCDC__enLayer_Copy(&sLayer,psLayerDest,sDimLayer);
+
+    free(pu8LayerDest);
+    free(pu8LayerSource);
     return IMAGPROC_enOK;
 
 }
@@ -798,11 +818,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef *restrict
 IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *restrict psLayerSource, LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim)
 {
 
-    register uint16_t u16Width=0,u16Height=0;
-    register uint32_t u32HeightSource=0,u32HeightDest=0;
-
-    register uint32_t u32LayerAddressSource;
-    register  uint32_t u32LayerAddressDest;
+    LCDC_TFT_TypeDef sLayer;
+    LCDC_DIMENSIONS_TypeDef sDimLayer;
+    register uint32_t u32Index=0;
 
     register  uint16_t u16DimX0=sDim.X[0];
     register uint16_t u16DimX1=sDim.X[1];
@@ -838,30 +856,50 @@ IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *restric
         u16DimWidth= u32LayerDestWidthTotal- u16DimX1;
     if((u16DimHeight+ u16DimY1)>u32LayerDestHeightTotal)
         u16DimHeight= u32LayerDestHeightTotal- u16DimY1;
+    Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal);
 
-    Cache__vInvL2 (psLayerSource->layerDataAddress, psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal);
-    u32HeightSource=(u16DimY0)*u32LayerSourceWidthTotal+u16DimX0;
-    u32HeightDest=(u16DimY1)*u32LayerDestWidthTotal+u16DimX1;
+    uint8_t* restrict pu8LayerSource=(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
+    uint16_t* restrict pu8LayerDest =(uint16_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
 
-    u32LayerAddressSource=psLayerSource->layerDataAddress+(u32HeightSource);
-    u32LayerAddressDest=psLayerDest->layerDataAddress+(u32HeightDest<<1);
+    Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight);
+
+    sLayer.layerWidthTotal=u16DimWidth;
+    sLayer.layerHeightTotal=u16DimHeight;
+    sLayer.variableType=VARIABLETYPE_enUCHAR;
+    sDimLayer.X[1]=0;
+    sDimLayer.Y[1]=0;
+    sDimLayer.width=u16DimWidth;
+    sDimLayer.height=u16DimHeight;
+
+    sDimLayer.X[0]=u16DimX0;
+    sDimLayer.Y[0]=u16DimY0;
+    sLayer.layerDataAddress=(uint32_t)pu8LayerSource;
+    LCDC__enLayer_Copy(psLayerSource,&sLayer,sDimLayer);
+
     #pragma UNROLL(4)
-    for(u16Height=0;u16Height<u16DimHeight;u16Height++)
+    for(u32Index=0;u32Index<u16DimHeight*u16DimWidth;u32Index++)
     {
-        #pragma UNROLL(8)
-        for(u16Width=0;u16Width<u16DimWidth;u16Width++)
-        {
-            u8Aux=*((uint8_t*)u32LayerAddressSource+u16Width);
+            u8Aux=*((uint8_t*)pu8LayerSource+u32Index);
             u16All =((uint16_t)u8Aux<<8)&0xF800;
             u16All|=((uint16_t)u8Aux<<3)&0x07E0;
             u16All|=((uint16_t)u8Aux>>3)&0x001F;
-            *((uint16_t*)u32LayerAddressDest+u16Width)= u16All;
-
-        }
-        u32LayerAddressSource+=u32LayerSourceWidthTotal;
-        u32LayerAddressDest+=u32LayerDestWidthTotal<<1;
+            *((uint16_t*)pu8LayerDest+u32Index)= u16All;
     }
-    Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal*2);
+    Cache__vWbL2 ((uint32_t)pu8LayerDest,u16DimHeight*u16DimWidth*2);
+
+    sLayer.variableType=VARIABLETYPE_enUSHORT;
+    sDimLayer.X[1]=u16DimX1;
+    sDimLayer.Y[1]=u16DimY1;
+    sDimLayer.width=u16DimWidth;
+    sDimLayer.height=u16DimHeight;
+
+    sDimLayer.X[0]=0;
+    sDimLayer.Y[0]=0;
+    sLayer.layerDataAddress=(uint32_t)pu8LayerDest;
+    LCDC__enLayer_Copy(&sLayer,psLayerDest,sDimLayer);
+
+    free(pu8LayerDest);
+    free(pu8LayerSource);
     return IMAGPROC_enOK;
 }
 
@@ -2225,25 +2263,24 @@ IMAGPROC_nStatus IMAGEPROC__en8bBlueScale_16bRGBScale(LCDC_TFT_TypeDef*restrict 
 IMAGPROC_nStatus IMAGEPROC__en16bSubtractionABS(LCDC_TFT_TypeDef* restrict psLayerSource1,LCDC_TFT_TypeDef* restrict psLayerSource2, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
 {
 
-    register uint16_t u16Width=0,u16Height=0;
-    register uint32_t u32HeightSource1=0,u32HeightSource2=0;
+    LCDC_TFT_TypeDef sLayer;
+    LCDC_DIMENSIONS_TypeDef sDimLayer;
+    register uint32_t u32Index=0;
 
-    register uint32_t u32LayerAddressDest;
-    register uint32_t u32LayerAddressSource1;
-    register uint32_t u32LayerAddressSource2;
 
     register uint16_t u16Value1 = 0;
     register uint16_t u16Value2 = 0;
-    register uint16_t u16Aux = 0;
+    register uint32_t u32Aux = 0;
+    register uint32_t u32Aux1 = 0;
+    register uint32_t u32Aux2 = 0;
 
-    register int8_t s8Blue1 = 0;
-    register int8_t s8Green1 = 0;
-    register int8_t s8Red1 = 0;
-    register int8_t s8Blue2 = 0;
-    register int8_t s8Green2 = 0;
-    register int8_t s8Red2 = 0;
+    register uint8_t u8Blue1 = 0;
+    register uint8_t u8Blue2 = 0;
+    register uint16_t u16Green1 = 0;
+    register uint16_t u16Green2 = 0;
+    register uint32_t u32Red1 = 0;
+    register uint32_t u32Red2 = 0;
 
-    register uint32_t u32HeightDest=0;
     register uint16_t u16Result = 0;
 
 
@@ -2297,74 +2334,78 @@ IMAGPROC_nStatus IMAGEPROC__en16bSubtractionABS(LCDC_TFT_TypeDef* restrict psLay
     if((u16DimHeight+ u16DimY2)>u32LayerDestHeightTotal)
         u16DimHeight= u32LayerDestHeightTotal- u16DimY2;
 
-    Cache__vInvL2 (psLayerSource1->layerDataAddress, psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal*2);
-    Cache__vInvL2 (psLayerSource2->layerDataAddress, psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal*2);
+    Cache__vWbInvL2 ((uint32_t)psLayerSource1->layerDataAddress,psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal*2);
+    Cache__vWbInvL2 ((uint32_t)psLayerSource2->layerDataAddress,psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal*2);
 
-    u32HeightSource1=(u16DimY0)*u32LayerSource1WidthTotal+u16DimX0;
-    u32HeightSource2=(u16DimY1)*u32LayerSource2WidthTotal+u16DimX1;
-    u32HeightDest=(u16DimY2)*u32LayerDestWidthTotal+u16DimX2;
+    uint16_t* restrict pu8LayerSource1 =(uint16_t *) memalign(4,sizeof(uint16_t)*u16DimWidth*u16DimHeight);
+    uint16_t* restrict pu8LayerSource2 =(uint16_t *) memalign(4,sizeof(uint16_t)*u16DimWidth*u16DimHeight);
+    uint16_t* restrict pu8LayerDest =(uint16_t *) memalign(4,sizeof(uint16_t)*u16DimWidth*u16DimHeight);
 
-    u32LayerAddressSource1=psLayerSource1->layerDataAddress+(u32HeightSource1<<1);
-    u32LayerAddressSource2=psLayerSource2->layerDataAddress+(u32HeightSource2<<1);
-    u32LayerAddressDest=psLayerDest->layerDataAddress+(u32HeightDest<<1);
+    Cache__vWbInvL2 ((uint32_t)pu8LayerSource1,u16DimWidth*u16DimHeight*2);
+    Cache__vWbInvL2 ((uint32_t)pu8LayerSource2,u16DimWidth*u16DimHeight*2);
 
-    for(u16Height=0;u16Height<u16DimHeight;u16Height++)
+    sLayer.layerWidthTotal=u16DimWidth;
+    sLayer.layerHeightTotal=u16DimHeight;
+    sLayer.variableType=VARIABLETYPE_enUSHORT;
+    sDimLayer.X[1]=0;
+    sDimLayer.Y[1]=0;
+    sDimLayer.width=u16DimWidth;
+    sDimLayer.height=u16DimHeight;
+
+    sDimLayer.X[0]=u16DimX0;
+    sDimLayer.Y[0]=u16DimY0;
+    sLayer.layerDataAddress=(uint32_t)pu8LayerSource1;
+    LCDC__enLayer_Copy(psLayerSource1,&sLayer,sDimLayer);
+
+    sLayer.layerDataAddress=(uint32_t)pu8LayerSource2;
+    sDimLayer.X[0]=u16DimX1;
+    sDimLayer.Y[0]=u16DimY1;
+    LCDC__enLayer_Copy(psLayerSource2,&sLayer,sDimLayer);
+#pragma UNROLL(8)
+    for(u32Index=0;u32Index<u16DimHeight*u16DimWidth;u32Index++)
     {
-        for(u16Width=0;u16Width<u16DimWidth;u16Width++)
-        {
 
-            u16Value1=*((uint16_t*)u32LayerAddressSource1+u16Width);
-            u16Value2=*((uint16_t*)u32LayerAddressSource2+u16Width);
+            u16Value1=*((uint16_t*)pu8LayerSource1+u32Index);
 
-            u16Aux=u16Value1&0x001F;
-            s8Blue1 =(int8_t)u16Aux;
+            u8Blue1=u16Value1&0x001F;
+            u16Green1=u16Value1&0x07E0;
+            u16Green1<<=3;
+            u16Value2=*((uint16_t*)pu8LayerSource2+u32Index);
+            u32Red1 =u16Value1&0xF800;
+            u32Red1 <<=5;
 
-            u16Aux=u16Value1&0x07E0;
-            u16Aux>>=5;
-            s8Green1=(int8_t)u16Aux;
+            u8Blue2=u16Value2&0x001F;
+            u16Green2=u16Value2&0x07E0;
+            u16Green2<<=3;
+            u32Aux1 =u32Red1|u16Green1|u8Blue1;
+            u32Red2 =u16Value2&0xF800;
+            u32Red2 <<=5;
 
-            u16Aux =u16Value1&0xF800;
-            u16Aux >>=11;
-            s8Red1=(int8_t)u16Aux;
+            u32Aux2 =u32Red2|u16Green2|u8Blue2;
 
-            u16Aux=u16Value2&0x001F;
-            s8Blue2 =(int8_t)u16Aux;
+            u32Aux=_subabs4((uint32_t)u32Aux1,(uint32_t)u32Aux2);
 
-            u16Aux=u16Value2&0x07E0;
-            u16Aux>>=5;
-            s8Green2=(int8_t)u16Aux;
-
-            u16Aux =u16Value2&0xF800;
-            u16Aux >>=11;
-            s8Red2=(int8_t)u16Aux;
-
-            s8Blue1-=s8Blue2;
-            s8Green1-=s8Green2;
-            s8Red1-=s8Red2;
-            if(s8Blue1<0)
-                s8Blue1*=-1;
-            if(s8Blue1>0x1F)
-                s8Blue1=0x1F;
-            if(s8Green1<0)
-                s8Green1*=-1;
-            if(s8Green1>0x3F)
-                s8Green1=0x3F;
-            if(s8Red1<0)
-                s8Red1*=-1;
-            if(s8Red1>0x1F)
-                s8Red1=0x1F;
-
-
-            u16Result=(uint16_t)(((uint16_t)s8Red1<<11)|((uint16_t)s8Green1<<5)|(uint16_t)s8Blue1);
-            *((uint16_t*)u32LayerAddressDest+u16Width)= u16Result;
-        }
-        u32LayerAddressSource1+=u32LayerSource1WidthTotal<<1;
-        u32LayerAddressSource2+=u32LayerSource2WidthTotal<<1;
-        u32LayerAddressDest+=u32LayerDestWidthTotal<<1;
+            u16Result=u32Aux&0x1F;
+            u16Result|=(uint16_t)((u32Aux>>3)&0x07E0);
+            u16Result|=(uint16_t)((u32Aux>>5)&0xF800);
+            *((uint16_t*)pu8LayerDest+u32Index)= u16Result;
     }
+    Cache__vWbL2 ((uint32_t)pu8LayerDest,u16DimHeight*u16DimWidth*2);
 
-    Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal*2);
+    sLayer.variableType=VARIABLETYPE_enUSHORT;
+    sDimLayer.X[1]=u16DimX2;
+    sDimLayer.Y[1]=u16DimY2;
+    sDimLayer.width=u16DimWidth;
+    sDimLayer.height=u16DimHeight;
 
+    sDimLayer.X[0]=0;
+    sDimLayer.Y[0]=0;
+    sLayer.layerDataAddress=(uint32_t)pu8LayerDest;
+    LCDC__enLayer_Copy(&sLayer,psLayerDest,sDimLayer);
+
+    free(pu8LayerDest);
+    free(pu8LayerSource2);
+    free(pu8LayerSource1);
     return IMAGPROC_enOK;
 }
 
@@ -2619,16 +2660,13 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtraction(LCDC_TFT_TypeDef* restrict psLayerSo
     return IMAGPROC_enOK;
 }
 
-
 IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* restrict psLayerSource1,LCDC_TFT_TypeDef* restrict psLayerSource2, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
 {
 
-    register uint16_t u16Width=0,u16Height=0;
-    register uint32_t u32HeightSource1=0,u32HeightSource2=0,u32HeightDest=0;
+    LCDC_TFT_TypeDef sLayerSource1;
+    LCDC_DIMENSIONS_TypeDef sDimLayer1;
+    register uint32_t u32Index=0;
 
-    register uint32_t u32LayerAddressDest;
-    register uint32_t u32LayerAddressSource1;
-    register uint32_t u32LayerAddressSource2;
 
     register uint16_t u16DimX0=sDim.X[0];
     register uint16_t u16DimX1=sDim.X[1];
@@ -2648,9 +2686,10 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* restrict psLaye
     register uint16_t u16DimWidth=sDim.width;
     register uint16_t u16DimHeight=sDim.height;
 
-    register int16_t s16Value = 0;
+    register uint8_t u8Value = 0;
     register uint8_t u8Value1 = 0;
     register uint8_t u8Value2 = 0;
+
     if((psLayerSource1->variableType != VARIABLETYPE_enUCHAR) || (psLayerSource2->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
             return IMAGPROC_enERROR;
@@ -2683,45 +2722,65 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* restrict psLaye
         u16DimWidth= u32LayerDestWidthTotal- u16DimX2;
     if((u16DimHeight+ u16DimY2)>u32LayerDestHeightTotal)
         u16DimHeight= u32LayerDestHeightTotal- u16DimY2;
+    Cache__vWbInvL2 ((uint32_t)psLayerSource1->layerDataAddress,psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal);
+    Cache__vWbInvL2 ((uint32_t)psLayerSource2->layerDataAddress,psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal);
 
-    Cache__vInvL2 (psLayerSource1->layerDataAddress, psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal);
-    Cache__vInvL2 (psLayerSource2->layerDataAddress, psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal);
+    uint8_t* restrict pu8LayerSource1 =(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
+    uint8_t* restrict pu8LayerSource2 =(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
+    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
 
-    u32HeightSource1=(u16DimY0)*u32LayerSource1WidthTotal+u16DimX0;
-    u32HeightSource2=(u16DimY1)*u32LayerSource2WidthTotal+u16DimX1;
-    u32HeightDest=(u16DimY2)*u32LayerDestWidthTotal+u16DimX2;
+    Cache__vWbInvL2 ((uint32_t)pu8LayerSource1,u16DimWidth*u16DimHeight);
+    Cache__vWbInvL2 ((uint32_t)pu8LayerSource2,u16DimWidth*u16DimHeight);
 
-    u32LayerAddressSource1=psLayerSource1->layerDataAddress+(u32HeightSource1);
-    u32LayerAddressSource2=psLayerSource2->layerDataAddress+(u32HeightSource2);
-    u32LayerAddressDest=psLayerDest->layerDataAddress+(u32HeightDest);
+    sLayerSource1.layerWidthTotal=u16DimWidth;
+    sLayerSource1.layerHeightTotal=u16DimHeight;
+    sLayerSource1.variableType=VARIABLETYPE_enUCHAR;
+    sDimLayer1.X[1]=0;
+    sDimLayer1.Y[1]=0;
+    sDimLayer1.width=u16DimWidth;
+    sDimLayer1.height=u16DimHeight;
 
-    for(u16Height=0;u16Height<u16DimHeight;u16Height++)
+    sDimLayer1.X[0]=u16DimX0;
+    sDimLayer1.Y[0]=u16DimY0;
+    sLayerSource1.layerDataAddress=(uint32_t)pu8LayerSource1;
+    LCDC__enLayer_Copy(psLayerSource1,&sLayerSource1,sDimLayer1);
+
+    sLayerSource1.layerDataAddress=(uint32_t)pu8LayerSource2;
+    sDimLayer1.X[0]=u16DimX1;
+    sDimLayer1.Y[0]=u16DimY1;
+    LCDC__enLayer_Copy(psLayerSource2,&sLayerSource1,sDimLayer1);
+    _nassert((int)(pu8LayerSource1)  == 0);
+    _nassert((int)(pu8LayerSource2)  == 0);
+    _nassert((int)(pu8LayerDest)  == 0);
+    #pragma UNROLL(4)
+    for(u32Index=0;u32Index<(u16DimHeight*u16DimWidth);u32Index++)
     {
-        for(u16Width=0;u16Width<u16DimWidth;u16Width++)
-        {
 
-            u8Value1=*((uint8_t*)u32LayerAddressSource1+u16Width);
-            u8Value2=*((uint8_t*)u32LayerAddressSource2+u16Width);
+            u8Value1=*((uint8_t*)pu8LayerSource1+u32Index);
+            u8Value2=*((uint8_t*)pu8LayerSource2+u32Index);
+            u8Value=_subabs4((uint32_t)u8Value1,(uint32_t)u8Value2);
 
-            s16Value=((int16_t)u8Value1-(int16_t)u8Value2);
-
-            if(s16Value<0)
-                s16Value*=-1;
-            if(s16Value>0xFF)
-                s16Value=0xFF;
-
-            *((uint8_t*)u32LayerAddressDest+u16Width)= (uint8_t)s16Value;
-
-        }
-        u32LayerAddressSource1+=u32LayerSource1WidthTotal;
-        u32LayerAddressSource2+=u32LayerSource2WidthTotal;
-        u32LayerAddressDest+=u32LayerDestWidthTotal;
+            *((uint8_t*)pu8LayerDest+u32Index)=u8Value;
     }
 
-    Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal);
+    Cache__vWbL2 ((uint32_t)pu8LayerDest,u16DimHeight*u16DimWidth);
 
+    sDimLayer1.X[1]=u16DimX2;
+    sDimLayer1.Y[1]=u16DimY2;
+    sDimLayer1.width=u16DimWidth;
+    sDimLayer1.height=u16DimHeight;
+
+    sDimLayer1.X[0]=0;
+    sDimLayer1.Y[0]=0;
+    sLayerSource1.layerDataAddress=(uint32_t)pu8LayerDest;
+    LCDC__enLayer_Copy(&sLayerSource1,psLayerDest,sDimLayer1);
+
+    free(pu8LayerDest);
+    free(pu8LayerSource2);
+    free(pu8LayerSource1);
     return IMAGPROC_enOK;
 }
+
 
 
 IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* restrict psLayerSource1,LCDC_TFT_TypeDef* restrict psLayerSource2, LCDC_TFT_TypeDef* restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
@@ -3392,7 +3451,6 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddBlend(LCDC_TFT_TypeDef* restrict psLayerSour
     #pragma UNROLL(4)
     for(u16Height=0;u16Height<u16DimHeight;u16Height++)
     {
-    #pragma UNROLL(4)
         for(u16Width=0;u16Width<u16DimWidth;u16Width++)
         {
 
@@ -4227,8 +4285,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,
     register uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
     register uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
 
-    register uint16_t u16DimWidth=sDim.u16Width;
-    register uint16_t u16DimHeight=sDim.u16Height;
+    register uint16_t u16DimWidth=sDim.width;
+    register uint16_t u16DimHeight=sDim.height;
 
     register uint8_t u8Aux = 0;
     register uint8_t u8UmbralMin=0;
@@ -4236,16 +4294,16 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,
 
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
-            return 0;
+            return IMAGPROC_enERROR;
     if(u16DimX0>u32LayerSourceWidthTotal)
-        return 0;
+        return IMAGPROC_enERROR;
     if(u16DimX1>u32LayerDestWidthTotal)
-        return 0;
+        return IMAGPROC_enERROR;
 
     if(u16DimY0>u32LayerSourceHeightTotal)
-        return 0;
+        return IMAGPROC_enERROR;
     if(u16DimY1>u32LayerDestHeightTotal)
-        return 0;
+        return IMAGPROC_enERROR;
 
     if((u16DimWidth+ u16DimX0)>u32LayerSourceWidthTotal)
         u16DimWidth= u32LayerSourceWidthTotal- u16DimX0;
@@ -4288,7 +4346,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,
         u32LayerAddressDest+=u32LayerDestWidthTotal;
     }
     Cache__vWbL2 (psLayerDest->layerDataAddress, psLayerDest->layerWidthTotal*psLayerDest->layerHeightTotal);
-    return 1;
+    return IMAGPROC_enOK;
 }
 
 
