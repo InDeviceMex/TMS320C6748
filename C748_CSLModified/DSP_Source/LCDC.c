@@ -147,8 +147,8 @@ void LCDC__vInit(void)
     SYSCFG0_MSTPRI2->LCDC_ = 0; //Prioridad LCDC maxima-1
     SYSCFG0_MSTPRI1->VPIF_DMA_0 = 1; //Prioridad LCDC maxima-1
     SYSCFG0_MSTPRI1->VPIF_DMA_1 = 1; //Prioridad LCDC maxima-1
-    SYSCFG0_MSTPRI1->EDMA30TC0 = 1; //Prioridad DMA minima-1
-    SYSCFG0_MSTPRI1->EDMA30TC1 = 1; //Prioridad DMA minima-1
+    SYSCFG0_MSTPRI1->EDMA30TC0 = 2; //Prioridad DMA minima-1
+    SYSCFG0_MSTPRI1->EDMA30TC1 = 2; //Prioridad DMA minima-1
     SysTick__vDelayUs(10000);
 
     LCDC_RASTER_CTRL->RASTER_EN= 0;         // Turn raster controller off

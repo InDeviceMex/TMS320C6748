@@ -59,7 +59,8 @@ volatile float MAIN__fProcessingBuffer12[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile float MAIN__fProcessingBuffer13[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 
-uint64_t u64CountOld=0,u64CountNew=0;
+float fCountOld=0,fCountNew=0;
+volatile float fValue=0;
 
 char     MAIN_cStringBG[30];
 uint16_t MAIN_u16LayerBG_BGX[2]={0};
@@ -167,7 +168,7 @@ int main(void)
 
     MAIN_vInitBaseSystem();
     MAIN_vInitInterrupt();
-    SysTick__enInitUs(1);
+    SysTick__enInitUs(100);
 
 
     SYSCFG0->PINMUX_Bit[1].PINMUX_31_28=8;//GP0_0
@@ -536,38 +537,41 @@ int main(void)
             u8State[0]=0;
         }
         */
-        u64CountOld=SysTick__u64GetCount();
+        fCountOld=SysTick__fGetTimeUs();
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[18],DimProcessing2);
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[19],DimProcessing2);
         IMAGEPROC__en8bSubtractionABS(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[20],DimProcessing2);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[14],DimProcessing2);
-        u64CountNew=SysTick__u64GetCount();
-        if((u8State[1]&0x7F)==0)
+        fCountNew=SysTick__fGetTimeUs();
+        if((u8State[1]&0xFF)==0)
         {
-        u64CountOld=(u64CountNew-u64CountOld)/25;
-        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime1_String,(uint64_t)u64CountOld);
+            fCountOld=(fCountNew-fCountOld);
+            fValue=fCountOld;
+        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime1_String,(uint64_t)fCountOld);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
         }
-        u64CountOld=SysTick__u64GetCount();
-        IMAGEPROC__en16bSubtractionABS(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
-        u64CountNew=SysTick__u64GetCount();
-        if((u8State[1]&0x7F)==0)
+
+
+        fCountOld=SysTick__fGetTimeUs();
+        IMAGEPROC__en16bAddMean(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
+        fCountNew=SysTick__fGetTimeUs();
+        if((u8State[1]&0xFF)==0)
         {
-        u64CountOld=(u64CountNew-u64CountOld)/25;
-        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime2_String,(uint64_t)u64CountOld);
+        fCountOld=(fCountNew-fCountOld);
+        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime2_String,(uint64_t)fCountOld);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
         }
 
-        u64CountOld=SysTick__u64GetCount();
+        fCountOld=SysTick__fGetTimeUs();
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[15]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[0]);
         LCDC__enLayerBG_RefreshSubLayer(1);
-        u64CountNew=SysTick__u64GetCount();
-        if((u8State[1]&0x7F)==0)
+        fCountNew=SysTick__fGetTimeUs();
+        if((u8State[1]&0xFF)==0)
         {
-        u64CountOld=(u64CountNew-u64CountOld)/25;
-        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime_String,(uint64_t)u64CountOld);
+            fCountOld=(fCountNew-fCountOld);
+        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime_String,(uint64_t)fCountOld);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[9]);
         }
 
