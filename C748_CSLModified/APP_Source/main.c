@@ -168,7 +168,7 @@ int main(void)
 
     MAIN_vInitBaseSystem();
     MAIN_vInitInterrupt();
-    SysTick__enInitUs(100);
+    SysTick__enInitUs(10);
 
 
     SYSCFG0->PINMUX_Bit[1].PINMUX_31_28=8;//GP0_0
@@ -553,7 +553,7 @@ int main(void)
 
 
         fCountOld=SysTick__fGetTimeUs();
-        IMAGEPROC__en16bAddMean(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
+        IMAGEPROC__en16bSubtractionABS(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
         fCountNew=SysTick__fGetTimeUs();
         if((u8State[1]&0xFF)==0)
         {
