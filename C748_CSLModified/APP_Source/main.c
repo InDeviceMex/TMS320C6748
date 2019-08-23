@@ -33,29 +33,55 @@ void GPIO0_vIsr(void);
 
 #define MAIN_SUBLAYERMAX (30)
 #pragma DATA_SECTION(MAIN_sLayerBGBuffer, ".MyData")
-#pragma DATA_ALIGN(MAIN_sLayerBGBuffer, 1024)
+#pragma DATA_ALIGN(MAIN_sLayerBGBuffer, 1024*1024)
 volatile uint16_t MAIN_sLayerBGBuffer[480][640];
 
 
 #pragma DATA_SECTION(MAIN__u16CameraBuffer, ".MyData")
-#pragma DATA_ALIGN(MAIN__u16CameraBuffer, 1024)
+#pragma DATA_ALIGN(MAIN__u16CameraBuffer, 1024*1024)
 volatile uint16_t MAIN__u16CameraBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 
-//#pragma DATA_SECTION(MAIN__u16ProcessingBuffer, ".MyData")
-//#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 1024*1024)
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer1, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer1, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer1[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer2, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer2, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer2[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer3, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer3, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer3[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__u8ProcessingBuffer4, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer4, 1024*1024)
 volatile uint8_t MAIN__u8ProcessingBuffer4[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer5, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer5, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer5[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer6, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer6, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer6[120][76];
+#pragma DATA_SECTION(MAIN__u16ProcessingBuffer7, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer7, 1024*1024)
 volatile uint16_t MAIN__u16ProcessingBuffer7[120][76];
+#pragma DATA_SECTION(MAIN__u8ProcessingBuffer8, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer8, 1024*1024)
 volatile uint8_t MAIN__u8ProcessingBuffer8[120][76];
+#pragma DATA_SECTION(MAIN__u8ProcessingBuffer9, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer9, 1024*1024)
 volatile uint8_t MAIN__u8ProcessingBuffer9[120][76];
+#pragma DATA_SECTION(MAIN__u8ProcessingBuffer10, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer10, 1024*1024)
 volatile uint8_t MAIN__u8ProcessingBuffer10[120][76];
+#pragma DATA_SECTION(MAIN__fProcessingBuffer11, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer11, 1024*1024)
 volatile float MAIN__fProcessingBuffer11[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__fProcessingBuffer12, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer12, 1024*1024)
 volatile float MAIN__fProcessingBuffer12[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_SECTION(MAIN__fProcessingBuffer13, ".MyBuffer")
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 1024*1024)
 volatile float MAIN__fProcessingBuffer13[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 
@@ -615,7 +641,6 @@ void MAIN_vInitBaseSystem(void)
 
     PSC0__enEnableDsp();
     PSC__enInit();
-
     Cache__enEnable(MEMCFG1_en32K,MEMCFG1_en32K,MEMCFG2_en256K);
 
     Cache__vDisableMARL2(DDR2_DATA_NCache_START,DDR2_DATA_NCache_LENGHT);
