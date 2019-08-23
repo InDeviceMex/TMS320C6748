@@ -61,7 +61,7 @@
 #define DDR2_DATA_Stack_START ((uint32_t)0xC1000000u)
 #define DDR2_DATA_Heap_START  ((uint32_t)0xC1800000u)
 #define DDR2_DATA_Cache_START      ((uint32_t)0xC2000000u)
-#define DDR2_DATA_NCache_START      ((uint32_t)0xC4000000u)
+#define DDR2_DATA_NCache_START      ((uint32_t)0xC6000000u)
 
 
 #define EMIFACS0_LENGHT  ((uint32_t)0x20000000u)  /* 512MB SDRAM Data (CS0) */
@@ -74,8 +74,8 @@
 #define DDR2_CONSTANT_LENGHT     ((uint32_t)0x00800000u)  /* 8MB DDR2 Data */
 #define DDR2_DATA_Stack_LENGHT   ((uint32_t)0x00800000u) /* 8MB DDR2 Data */
 #define DDR2_DATA_Heap_LENGHT    ((uint32_t)0x00800000u) /* 8MB DDR2 Data */
-#define DDR2_DATA_Cache_LENGHT   ((uint32_t)0x02000000u)  /* 32MB DDR2 Data */
-#define DDR2_DATA_NCache_LENGHT  ((uint32_t)0x04000000u)  /* 64MB DDR2 Data */
+#define DDR2_DATA_Cache_LENGHT   ((uint32_t)0x04000000u)  /* 64MB DDR2 Data */
+#define DDR2_DATA_NCache_LENGHT  ((uint32_t)0x02000000u)  /* 32MB DDR2 Data */
 
 
 #endif /* INCLUDE_CORE_H_ */

@@ -36,7 +36,8 @@ MEMORY
     DDR2_DATA_Stack  o = 0xC1000000  l = 0x00800000   /* 8MB DDR2 Data */
     DDR2_DATA_Heap   o = 0xC1800000  l = 0x00800000   /* 8MB DDR2 Data */
     DDR2_DATA_Cache  o = 0xC2000000  l = 0x02000000   /* 32MB DDR2 Data */
-    DDR2_DATA_NCache o = 0xC4000000  l = 0x04000000   /* 64MB DDR2 Data */
+    DDR2_DATA_CacheBuffer  o = 0xC4000000  l = 0x02000000   /* 32MB DDR2 Data */
+    DDR2_DATA_NCache o = 0xC6000000  l = 0x02000000   /* 32MB DDR2 Data */
 }
 
 SECTIONS                                       
@@ -74,6 +75,7 @@ SECTIONS
   
     /* USER */
     .MyData >DDR2_DATA_NCache
+    .MyBuffer >DDR2_DATA_CacheBuffer
 
 
 }
