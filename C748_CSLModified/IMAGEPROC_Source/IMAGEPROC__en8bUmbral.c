@@ -65,8 +65,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,
 
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal);
 
-    register uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
-    register uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(4,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
+    register uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
+    register uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
 
     register uint8_t* restrict pu8LayerSourceInitial =pu8LayerSource;
     register uint8_t* restrict pu8LayerDestInitial =pu8LayerDest;
