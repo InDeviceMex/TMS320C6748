@@ -184,5 +184,6 @@ void PLLC_vDevicePLLC1(uint32_t u32Pllm,uint32_t u32PostDiv,uint32_t u32PllDiv1,
 
 void PLLC__vSetCore400Mhz(void)
 {
-    PLLC_vDevicePLLC0(1,15,0,0,3,7);
+    PLLC_vDevicePLLC0(0,15,0,0,3,7);
+    PLLC_vDevicePLLC1(23,2,1,2,3);
 }
