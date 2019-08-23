@@ -11,7 +11,7 @@
 int32_t LCDC__s32Layer_ConvString( char* pcStringIn,char* pcStringOut);
 
 #pragma DATA_SECTION(LCDC_sLayerBGBuffer, ".MyData")
-#pragma DATA_ALIGN(LCDC_sLayerBGBuffer, 1024)
+#pragma DATA_ALIGN(LCDC_sLayerBGBuffer, 1024*1024)
 volatile LCDC_Frame_TypeDef LCDC_sLayerBGBuffer;
 uint16_t LCDC_u16LayerBGPosInitBGX[2]={0};//{(1024-640)/2,0};
 uint16_t LCDC_u16LayerBGPosInitBGY[2]={0};//{(600-480)/2,0};
@@ -69,7 +69,7 @@ void LCDC__vInit(void)
     LCDC_sConfigParameter.vfp=32;
     LCDC_sConfigParameter.vsw=2;
 
-    DDR2_PBBPR->PR_OLD_COUNT = 0x10;
+    DDR2_PBBPR->PR_OLD_COUNT = 0x30;
 
 
     /* Palette */
@@ -147,8 +147,8 @@ void LCDC__vInit(void)
     SYSCFG0_MSTPRI2->LCDC_ = 0; //Prioridad LCDC maxima-1
     SYSCFG0_MSTPRI1->VPIF_DMA_0 = 1; //Prioridad LCDC maxima-1
     SYSCFG0_MSTPRI1->VPIF_DMA_1 = 1; //Prioridad LCDC maxima-1
-    SYSCFG0_MSTPRI1->EDMA30TC0 = 2; //Prioridad DMA minima-1
-    SYSCFG0_MSTPRI1->EDMA30TC1 = 2; //Prioridad DMA minima-1
+    SYSCFG0_MSTPRI1->EDMA30TC0 = 1; //Prioridad DMA minima-1
+    SYSCFG0_MSTPRI1->EDMA30TC1 = 1; //Prioridad DMA minima-1
     SysTick__vDelayUs(10000);
 
     LCDC_RASTER_CTRL->RASTER_EN= 0;         // Turn raster controller off
@@ -185,7 +185,7 @@ void LCDC__vInit(void)
 
     LCDC_RASTER_SUBPANEL_R     = 0x0; //disable subpanel
     LCDC_LCDDMA_CTRL_R         = 0x00000000;
-    LCDC_LCDDMA_CTRL->BURST_SIZE=2;//2;
+    LCDC_LCDDMA_CTRL->BURST_SIZE=4;//2;
     LCDC_LCDDMA_CTRL->TH_FIFO_READY=6;//6;
 
     LCDC_LCDDMA_FB0_BASE_R     = (uint32_t)&LCDC_sLayerBGBuffer.Palette[0];   // Frame buffer start
