@@ -33,55 +33,56 @@ void GPIO0_vIsr(void);
 
 #define MAIN_SUBLAYERMAX (30)
 #pragma DATA_SECTION(MAIN_sLayerBGBuffer, ".MyData")
-#pragma DATA_ALIGN(MAIN_sLayerBGBuffer, 1024*1024)
+#pragma DATA_ALIGN(MAIN_sLayerBGBuffer, 0x8000)
 volatile uint16_t MAIN_sLayerBGBuffer[480][640];
 
 
 #pragma DATA_SECTION(MAIN__u16CameraBuffer, ".MyData")
-#pragma DATA_ALIGN(MAIN__u16CameraBuffer, 1024*1024)
+#pragma DATA_ALIGN(MAIN__u16CameraBuffer, 0x8000)
 volatile uint16_t MAIN__u16CameraBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer1, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer1, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer1[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer1, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer2, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer2, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer2[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer2, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer3, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer3, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer3[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer3, 0x8000)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer4, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer4, 1024*1024)
-volatile uint8_t MAIN__u8ProcessingBuffer4[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer4, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer5, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer5, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer5[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer5, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer6, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer6, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer6[120][76];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer6, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer7, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer7, 1024*1024)
-volatile uint16_t MAIN__u16ProcessingBuffer7[120][76];
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer7, 0x8000)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer8, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer8, 1024*1024)
-volatile uint8_t MAIN__u8ProcessingBuffer8[120][76];
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer8, 0x8000)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer9, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer9, 1024*1024)
-volatile uint8_t MAIN__u8ProcessingBuffer9[120][76];
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer9, 0x8000)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer10, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer10, 1024*1024)
-volatile uint8_t MAIN__u8ProcessingBuffer10[120][76];
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer10, 0x8000)
 #pragma DATA_SECTION(MAIN__fProcessingBuffer11, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__fProcessingBuffer11, 1024*1024)
-volatile float MAIN__fProcessingBuffer11[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer11, 0x8000)
 #pragma DATA_SECTION(MAIN__fProcessingBuffer12, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__fProcessingBuffer12, 1024*1024)
-volatile float MAIN__fProcessingBuffer12[CAMERA_HEIGHT][CAMERA_WIDTH];
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer12, 0x8000)
 #pragma DATA_SECTION(MAIN__fProcessingBuffer13, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 1024*1024)
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 0x8000)
+
+volatile uint16_t MAIN__u16ProcessingBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer1[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer2[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer3[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint8_t MAIN__u8ProcessingBuffer4[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer5[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer6[120][76];
+volatile uint16_t MAIN__u16ProcessingBuffer7[120][76];
+volatile uint8_t MAIN__u8ProcessingBuffer8[120][76];
+volatile uint8_t MAIN__u8ProcessingBuffer9[120][76];
+volatile uint8_t MAIN__u8ProcessingBuffer10[120][76];
+volatile float MAIN__fProcessingBuffer11[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile float MAIN__fProcessingBuffer12[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile float MAIN__fProcessingBuffer13[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 
@@ -224,7 +225,9 @@ int main(void)
     OV5640__vSetOutSize(4,0,CAMERA_WIDTH,CAMERA_HEIGHT);
 
 
+    GPIO0_SET_DATA_R=GPIO_R_P13_MASK;
     SysTick__vDelayUs(5000);
+    GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
     VPIF__vInitReceive((uint32_t)MAIN__u16CameraBuffer,CAMERA_WIDTH);
 
     LCDC__u8LayerBG_AddSubLayer(MAIN_psLayerBG);
@@ -555,56 +558,32 @@ int main(void)
 
     while(1)
     {
-        u8State[1]++;
-      /*  if(u8State[0]>0)
-        {
-            LCDC__enLayer_Copy(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
-            IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[15],&MAIN_sSubLayerBG_Generic[16],DimProcessing);
-            u8State[0]=0;
-        }
-        */
-        fCountOld=SysTick__fGetTimeUs();
+
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[18],DimProcessing2);
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[19],DimProcessing2);
         IMAGEPROC__en8bSubtractionABS(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[20],DimProcessing2);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[14],DimProcessing2);
-        fCountNew=SysTick__fGetTimeUs();
-        if((u8State[1]&0xFF)==0)
-        {
-            fCountOld=(fCountNew-fCountOld);
-            fValue=fCountOld;
-        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime1_String,(uint64_t)fCountOld);
-        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
-        }
 
-
-        fCountOld=SysTick__fGetTimeUs();
-        IMAGEPROC__en16bSubtractionABS(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
-        fCountNew=SysTick__fGetTimeUs();
-        if((u8State[1]&0xFF)==0)
-        {
-        fCountOld=(fCountNew-fCountOld);
-        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime2_String,(uint64_t)fCountOld);
-        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
-        }
-
-        fCountOld=SysTick__fGetTimeUs();
+        GPIO0_SET_DATA_R=GPIO_R_P13_MASK;
+        IMAGEPROC__en16bAddPartialConstant(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[15],DimProcessing2,0xFF,0,0);
+        GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[15]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[0]);
         LCDC__enLayerBG_RefreshSubLayer(1);
-        fCountNew=SysTick__fGetTimeUs();
-        if((u8State[1]&0xFF)==0)
-        {
-            fCountOld=(fCountNew-fCountOld);
-        LTDC__u64Layer_Printf("Time: %ld us",MAIN_cTime_String,(uint64_t)fCountOld);
-        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[9]);
-        }
 
-       GPIO0_OUT_DATA_R^=GPIO_R_P13_MASK;
     }
 }
 
+// fCountOld=SysTick__fGetTimeUs();
+/*      fCountNew=SysTick__fGetTimeUs();
+  if(u8State[0]>0)
+  {
+      LCDC__enLayer_Copy(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
+      IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[15],&MAIN_sSubLayerBG_Generic[16],DimProcessing);
+      u8State[0]=0;
+  }
+  */
 void MAIN_vInitInterrupt(void)
 {
     INTC__vDspInit();

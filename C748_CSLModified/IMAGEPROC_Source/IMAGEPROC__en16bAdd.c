@@ -20,9 +20,12 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
      uint16_t u16Value1 = 0;
      uint16_t u16Value2 = 0;
 
-     uint16_t u16Blue1 = 0;
+     uint8_t u8Value1 = 0;
+     uint8_t u8Value2 = 0;
+
+     uint8_t u8Blue = 0;
      uint16_t u16Green1 = 0;
-     uint16_t u16Red1 = 0;
+     uint8_t u8Red = 0;
 
      uint32_t u32Blue = 0;
      uint32_t u32Green = 0;
@@ -131,32 +134,58 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
     _nassert ((int)(pu16LayerSource2) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    #pragma UNROLL(8)
-    #pragma MUST_ITERATE (8,,8)
+    #pragma UNROLL(2)
+    #pragma MUST_ITERATE (2,,2)
     for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
     {
-        u16Value1=*((uint16_t*)pu16LayerSource1);
-        u16Value2=*((uint16_t*)pu16LayerSource2);
+        u8Value1=*((uint8_t*)pu16LayerSource1)&0x1F;
+        u8Value2=*((uint8_t*)pu16LayerSource2)&0x1F;
         pu16LayerSource1++;
         pu16LayerSource2++;
 
-
-        u16Blue1 =u16Value1&0x001F;
-        u32Blue =(u16Value2&0x001F)<<16;
-        u32Blue|=u16Blue1;
+        u32Blue =u8Value2<<16;
+        u32Blue|=u8Value1;
         u32AuxBlue=(uint32_t)_dotp2(u32Blue,u32Blue);
-
+        u32AuxBlue>>=1;
         fAuxBlue = _rsqrsp((float)u32AuxBlue);
         fAuxBlue = fAuxBlue * (1.5f - ((float)u32AuxBlue * fAuxBlue * fAuxBlue * 0.5f));
         fAuxBlue = fAuxBlue * (1.5f - ((float)u32AuxBlue * fAuxBlue * fAuxBlue * 0.5f));
         fResultBlue = (float)u32AuxBlue * fAuxBlue;
 
-        u16Blue1=(uint16_t)fResultBlue;
-        if(u16Blue1>0x1F)
-            u16Blue1=0x1F;
-        *((uint16_t*)pu16LayerDest)= u16Blue1;
+        u8Blue=(uint8_t)fResultBlue;
+        *((uint8_t*)pu16LayerDest)= u8Blue;
         pu16LayerDest++;
 
+    }
+    pu16LayerSource1=pu16LayerSource1Initial;
+    pu16LayerSource2=pu16LayerSource2Initial;
+    pu16LayerDest=pu16LayerDestInitial;
+
+    _nassert ((int)(pu16LayerSource1) % 8 == 0);
+    _nassert ((int)(pu16LayerSource2) % 8 == 0);
+    _nassert ((int)(pu16LayerDest) % 8 == 0);
+    #pragma UNROLL(4)
+    #pragma MUST_ITERATE (4,,4)
+    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
+    {
+        u8Value1=*((uint8_t*)pu16LayerSource1+1)&0xF8;
+        u8Value2=*((uint8_t*)pu16LayerSource2+1)&0xF8;
+        pu16LayerSource1++;
+        pu16LayerSource2++;
+
+        u32Red =u8Value2<<13;
+        u32Red|=u8Value1>>3;
+        u32AuxRed=(uint32_t)_dotp2(u32Red,u32Red);
+        u32AuxRed>>=1;
+        fAuxRed = _rsqrsp((float)u32AuxRed);
+        fAuxRed = fAuxRed * (1.5f - ((float)u32AuxRed * fAuxRed * fAuxRed * 0.5f));
+        fAuxRed = fAuxRed * (1.5f - ((float)u32AuxRed * fAuxRed * fAuxRed * 0.5f));
+        fResultRed = (float)u32AuxRed * fAuxRed;
+
+        u8Red=(uint8_t)fResultRed;
+        u8Red<<=3;
+        *((uint8_t*)pu16LayerDest+1)= u8Red;
+        pu16LayerDest++;
     }
 
     pu16LayerSource1=pu16LayerSource1Initial;
@@ -170,62 +199,28 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
     #pragma MUST_ITERATE (8,,8)
     for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
     {
-        u16Value1=*((uint16_t*)pu16LayerSource1);
-        u16Value2=*((uint16_t*)pu16LayerSource2);
+        u16Value1=*((uint16_t*)pu16LayerSource1)&0x07E0;
+        u16Value2=*((uint16_t*)pu16LayerSource2)&0x07E0;
         pu16LayerSource1++;
         pu16LayerSource2++;
-        u16Green1 =(u16Value1&0x07E0)>>5;
-        u32Green =(u16Value2&0x07E0)<<11;
+        u16Green1 =u16Value1>>5;
+        u32Green =u16Value2<<11;
         u32Green|=u16Green1;
 
         u32AuxGreen=(uint32_t)_dotp2(u32Green,u32Green);
-
+        u32AuxGreen>>=1;
         fAuxGreen = _rsqrsp((float)u32AuxGreen);
         fAuxGreen = fAuxGreen * (1.5f - ((float)u32AuxGreen * fAuxGreen * fAuxGreen * 0.5f));
         fAuxGreen = fAuxGreen * (1.5f - ((float)u32AuxGreen * fAuxGreen * fAuxGreen * 0.5f));
         fResultGreen = (float)u32AuxGreen * fAuxGreen;
 
         u16Green1=(uint16_t)fResultGreen;
-        if(u16Green1>0x3F)
-            u16Green1=0x3F;
         u16Green1<<=5;
         *((uint16_t*)pu16LayerDest)|= u16Green1;
         pu16LayerDest++;
 
     }
 
-    pu16LayerSource1=pu16LayerSource1Initial;
-    pu16LayerSource2=pu16LayerSource2Initial;
-    pu16LayerDest=pu16LayerDestInitial;
-
-    _nassert ((int)(pu16LayerSource1) % 8 == 0);
-    _nassert ((int)(pu16LayerSource2) % 8 == 0);
-    _nassert ((int)(pu16LayerDest) % 8 == 0);
-    #pragma UNROLL(8)
-    #pragma MUST_ITERATE (8,,8)
-    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
-    {
-            u16Value1=*((uint16_t*)pu16LayerSource1);
-            u16Value2=*((uint16_t*)pu16LayerSource2);
-            pu16LayerSource1++;
-            pu16LayerSource2++;
-            u16Red1 =(u16Value1&0xF800)>>11;
-            u32Red =(u16Value2&0xF800)<<5;
-            u32Red|=u16Red1;
-            u32AuxRed=(uint32_t)_dotp2(u32Red,u32Red);
-
-            fAuxRed = _rsqrsp((float)u32AuxRed);
-            fAuxRed = fAuxRed * (1.5f - ((float)u32AuxRed * fAuxRed * fAuxRed * 0.5f));
-            fAuxRed = fAuxRed * (1.5f - ((float)u32AuxRed * fAuxRed * fAuxRed * 0.5f));
-            fResultRed = (float)u32AuxRed * fAuxRed;
-
-            u16Red1=(uint16_t)fResultRed;
-            if(u16Red1>0x1F)
-                u16Red1=0x1F;
-            u16Red1<<=11;
-            *((uint16_t*)pu16LayerDest)|= u16Red1;
-            pu16LayerDest++;
-    }
 
     Cache__vWbL2 ((uint32_t)pu16LayerDestInitial, u16DimHeight*u16DimWidth*2);
 

@@ -8,30 +8,30 @@
 
 #include <ImageProcessing.h>
 
-IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint8_t u8UmbralCenter, uint8_t u8UmbralLength)
+IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint8_t u8UmbralCenter, uint8_t u8UmbralLength)
 {
 
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
-    register uint32_t u32Index=0;
+    int32_t s32Index=0;
 
-    register uint16_t u16DimX0=sDim.X[0];
-    register uint16_t u16DimX1=sDim.X[1];
-    register uint16_t u16DimY0=sDim.Y[0];
-    register uint16_t u16DimY1=sDim.Y[1];
+    uint16_t u16DimX0=sDim.X[0];
+    uint16_t u16DimX1=sDim.X[1];
+    uint16_t u16DimY0=sDim.Y[0];
+    uint16_t u16DimY1=sDim.Y[1];
 
-    register uint32_t u32LayerSourceWidthTotal=psLayerSource->layerWidthTotal;
-    register uint32_t u32LayerSourceHeightTotal=psLayerSource->layerHeightTotal;
+    uint32_t u32LayerSourceWidthTotal=psLayerSource->layerWidthTotal;
+    uint32_t u32LayerSourceHeightTotal=psLayerSource->layerHeightTotal;
 
-    register uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
-    register uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
+    uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
+    uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
 
-    register uint16_t u16DimWidth=sDim.width;
-    register uint16_t u16DimHeight=sDim.height;
+    uint16_t u16DimWidth=sDim.width;
+    uint16_t u16DimHeight=sDim.height;
 
-    register uint8_t u8Aux = 0;
-    register uint8_t u8UmbralMin=0;
-    register uint8_t u8UmbralMax=255;
+    uint8_t u8Aux = 0;
+    uint8_t u8UmbralMin=0;
+    uint8_t u8UmbralMax=255;
 
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
@@ -65,11 +65,11 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,
 
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal);
 
-    register uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
-    register uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight);
+    uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
+    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
 
-    register uint8_t* restrict pu8LayerSourceInitial =pu8LayerSource;
-    register uint8_t* restrict pu8LayerDestInitial =pu8LayerDest;
+    uint8_t* restrict pu8LayerSourceInitial =pu8LayerSource;
+    uint8_t* restrict pu8LayerDestInitial =pu8LayerDest;
 
 
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight);
@@ -85,8 +85,12 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *restrict psLayerSource,
     sLayer.variableType=VARIABLETYPE_enUCHAR;
     sLayer.layerDataAddress=(uint32_t)pu8LayerSource;
     LCDC__enLayer_Copy(psLayerSource,&sLayer,sDimLayer);
+    _nassert ((int)(pu8LayerSource) % 8 == 0);
+    _nassert ((int)(pu8LayerDest) % 8 == 0);
 
-    for(u32Index=0;u32Index<u16DimHeight*u16DimWidth;u32Index++)
+    #pragma UNROLL(16)
+    #pragma MUST_ITERATE (16,,16)
+    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
     {
 
             u8Aux=*((uint8_t*)pu8LayerSource);

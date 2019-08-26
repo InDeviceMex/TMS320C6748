@@ -122,8 +122,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     _nassert ((int)(pu16LayerSource2) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    #pragma UNROLL(4)
-    #pragma MUST_ITERATE (16,,16)
+    #pragma UNROLL(10)
+    #pragma MUST_ITERATE (10,,10)
     for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
     {
         u16Value1=*((uint16_t*)pu16LayerSource1);

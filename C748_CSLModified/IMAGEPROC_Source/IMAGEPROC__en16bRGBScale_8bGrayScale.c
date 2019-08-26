@@ -13,6 +13,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef * psLayer
     LCDC_DIMENSIONS_TypeDef sDimLayer;
     int32_t s32Index=0;
     uint8_t u8Add=0;
+    uint8_t u8Red=0;
+    uint8_t u8Green=0;
+    uint8_t u8Blue=0;
 
     uint16_t u16DimX0=sDim.X[0];
     uint16_t u16DimX1=sDim.X[1];
@@ -76,20 +79,20 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef * psLayer
     _nassert ((int)(pu16LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
 
-    #pragma UNROLL(16)
-    #pragma MUST_ITERATE (32,,16)
+    #pragma UNROLL(10)
+    #pragma MUST_ITERATE (10,,10)
     for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth);s32Index++)
     {
 
             u16Aux=*((uint16_t*)pu16LayerSource);
-            pu16LayerSource++;
-            u8Add=(uint8_t)((uint16_t)(u16Aux&0xF800)>>10);
-            u8Add+=(uint8_t)((uint16_t)(u16Aux&0x07E0)>>5);
-            u8Add+=(uint8_t)((uint16_t)u16Aux<<1)&0x3F;
+            u8Red=(uint8_t)((u16Aux&0xF800)>>10);
+            u8Green=(uint8_t)((u16Aux&0x07E0)>>5);
+            u8Blue=(uint8_t)((u16Aux&0x1F)*2);
 
-            u8Add/=3;
-            *((uint8_t*)pu8LayerDest)=(uint8_t) (u8Add<<2);
+            u8Add=(u8Red+u8Green+u8Blue)/3;
+            *((uint8_t*)pu8LayerDest)=(u8Add*4);
             pu8LayerDest++;
+            pu16LayerSource++;
 
     }
     Cache__vWbL2 ((uint32_t)pu8LayerDestInitial, u16DimHeight*u16DimWidth);

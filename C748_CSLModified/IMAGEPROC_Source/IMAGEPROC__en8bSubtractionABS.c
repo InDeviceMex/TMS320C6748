@@ -73,8 +73,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* psLayerSource1,
     Cache__vWbInvL2 ((uint32_t)psLayerSource1->layerDataAddress,psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal);
     Cache__vWbInvL2 ((uint32_t)psLayerSource2->layerDataAddress,psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal);
 
-    u8Mod=(uint8_t)((u16DimWidth*u16DimHeight)%88);
-    u8Mod=88-u8Mod;
+    u8Mod=(uint8_t)((u16DimWidth*u16DimHeight)%64);
+    u8Mod=64-u8Mod;
     uint8_t* restrict pu8LayerSource1 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerSource2 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
@@ -103,19 +103,20 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* psLayerSource1,
     sDimLayer1.Y[0]=u16DimY1;
     LCDC__enLayer_Copy(psLayerSource2,&sLayerSource1,sDimLayer1);
     _nassert ((int)(pu8LayerSource1) % 8 == 0);
+    _nassert ((int)(pu8LayerSource2) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
 
-    #pragma UNROLL(64)
-    #pragma MUST_ITERATE (64,,64)
+    #pragma UNROLL(16)
+    #pragma MUST_ITERATE (16,,16)
     for(u32Index=0;u32Index<(u16DimHeight*u16DimWidth);u32Index++)
     {
 
             s16Value=*((uint8_t*)pu8LayerSource1);
             pu8LayerSource1++;
             s16Value-=*((uint8_t*)pu8LayerSource2);
+            pu8LayerSource2++;
             if(s16Value<0)
                 s16Value=-s16Value;
-            pu8LayerSource2++;
             *((uint8_t*)pu8LayerDest)=(uint8_t)s16Value;
             pu8LayerDest++;
     }

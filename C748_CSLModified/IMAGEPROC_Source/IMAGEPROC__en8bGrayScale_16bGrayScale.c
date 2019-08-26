@@ -82,15 +82,15 @@ IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayer
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    #pragma UNROLL(24)
-    #pragma MUST_ITERATE (32,,32)
+    #pragma UNROLL(4)
+    #pragma MUST_ITERATE (4,,4)
     for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
     {
             u8Aux=*((uint8_t*)pu8LayerSource);
             pu8LayerSource++;
-            u16All =((uint16_t)u8Aux<<8)&0xF800;
-            u16All|=((uint16_t)u8Aux<<3)&0x07E0;
-            u16All|=((uint16_t)u8Aux>>3)&0x001F;
+            u16All =((uint16_t)u8Aux*256)&0xF800;
+            u16All+=((uint16_t)u8Aux*8)&0x07E0;
+            u16All+=((uint16_t)u8Aux>>3)&0x001F;
             *((uint16_t*)pu16LayerDest)= u16All;
             pu16LayerDest++;
     }

@@ -11,7 +11,7 @@
 int32_t LCDC__s32Layer_ConvString( char* pcStringIn,char* pcStringOut);
 
 #pragma DATA_SECTION(LCDC_sLayerBGBuffer, ".MyData")
-#pragma DATA_ALIGN(LCDC_sLayerBGBuffer, 1024*1024)
+#pragma DATA_ALIGN(LCDC_sLayerBGBuffer, 0x8000)
 volatile LCDC_Frame_TypeDef LCDC_sLayerBGBuffer;
 uint16_t LCDC_u16LayerBGPosInitBGX[2]={0};//{(1024-640)/2,0};
 uint16_t LCDC_u16LayerBGPosInitBGY[2]={0};//{(600-480)/2,0};
