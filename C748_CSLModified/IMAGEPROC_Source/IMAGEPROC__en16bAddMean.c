@@ -37,7 +37,6 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     uint16_t u16DimWidth=sDim.width;
     uint16_t u16DimHeight=sDim.height;
 
-    uint8_t u8Mod = 0;
     uint8_t u8Aux1_0 = 0;
     uint8_t u8Aux1_1 = 0;
     uint8_t u8Aux1_2 = 0;
@@ -83,12 +82,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     Cache__vWbInvL2 (psLayerSource1->layerDataAddress, psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal*2);
     Cache__vWbInvL2 (psLayerSource2->layerDataAddress, psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal*2);
 
-
-    u8Mod=(uint8_t)((u16DimWidth*u16DimHeight)%32);
-    u8Mod=32-u8Mod;
-    uint16_t* restrict pu16LayerSource1 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
-    uint16_t* restrict pu16LayerSource2 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
-    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
+    uint16_t* restrict pu16LayerSource1 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+32));
+    uint16_t* restrict pu16LayerSource2 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+32));
+    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+32));
 
     uint16_t* restrict pu16LayerSource1Initial =pu16LayerSource1;
     uint16_t* restrict pu16LayerSource2Initial =pu16LayerSource2;
