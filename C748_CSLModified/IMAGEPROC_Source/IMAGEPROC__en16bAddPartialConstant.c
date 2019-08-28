@@ -116,7 +116,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSou
         u16Green=(u32Aux>>3)&0x07E0;
         u32Red =(u32Aux>>5)&0xF800;
 
-        *((uint16_t*)pu16LayerDest)= (uint16_t)(u32Red|u16Green|u8Blue_);
+        *((uint16_t*)pu16LayerDest)= (uint16_t)((uint16_t)u32Red|u16Green|u8Blue_);
         pu16LayerDest++;
     }
 
