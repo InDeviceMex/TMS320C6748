@@ -24,10 +24,10 @@ typedef enum
 IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__enGetHSI16bRGBScale(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 
-IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScale(LCDC_TFT_TypeDef *restrict layerSource, LCDC_TFT_TypeDef *restrict layerDest,LCDC_DIMENSIONS_TypeDef dim);
-IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleRed(LCDC_TFT_TypeDef * restrict psLayerSource, LCDC_TFT_TypeDef * restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
-IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleGreen(LCDC_TFT_TypeDef * restrict psLayerSource, LCDC_TFT_TypeDef * restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
-IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleBlue(LCDC_TFT_TypeDef * restrict psLayerSource, LCDC_TFT_TypeDef * restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScale(LCDC_TFT_TypeDef *layerSource, LCDC_TFT_TypeDef *layerDest,LCDC_DIMENSIONS_TypeDef dim);
+IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleRed(LCDC_TFT_TypeDef * psLayerSource, LCDC_TFT_TypeDef * psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleGreen(LCDC_TFT_TypeDef * psLayerSource, LCDC_TFT_TypeDef * psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleBlue(LCDC_TFT_TypeDef * psLayerSource, LCDC_TFT_TypeDef * psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGrayScale(LCDC_TFT_TypeDef * psLayerSource, LCDC_TFT_TypeDef * psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef *psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
@@ -42,7 +42,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGreenPartialScale(LCDC_TFT_TypeDef *
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bBlueScale(LCDC_TFT_TypeDef *restrict psLayerSource, LCDC_TFT_TypeDef*restrict psLayerDestRed,LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bBluePartialScale(LCDC_TFT_TypeDef *restrict psLayerSource, LCDC_TFT_TypeDef*restrict psLayerDestRed,LCDC_DIMENSIONS_TypeDef sDim);
 
-IMAGPROC_nStatus IMAGEPROC__en8bRGBPartialScale_16bRGBScale(LCDC_TFT_TypeDef*restrict psLayerSourceRed, LCDC_TFT_TypeDef *restrict psLayerSourceGreen,LCDC_TFT_TypeDef *restrict psLayerSourceBlue,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en8bRGBPartialScale_16bRGBScale(LCDC_TFT_TypeDef*psLayerSourceRed, LCDC_TFT_TypeDef *psLayerSourceGreen,LCDC_TFT_TypeDef *psLayerSourceBlue,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__en8bRGBScale_16bRGBScale(LCDC_TFT_TypeDef*restrict psLayerSourceRed, LCDC_TFT_TypeDef *restrict psLayerSourceGreen,LCDC_TFT_TypeDef *restrict psLayerSourceBlue,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__en8bRedPartialScale_16bRGBScale(LCDC_TFT_TypeDef*restrict psLayerSourceRed, LCDC_TFT_TypeDef *restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__en8bRedScale_16bRGBScale(LCDC_TFT_TypeDef*restrict psLayerSourceRed, LCDC_TFT_TypeDef *restrict psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
