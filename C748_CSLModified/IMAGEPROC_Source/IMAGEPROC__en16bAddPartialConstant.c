@@ -9,6 +9,7 @@
 #include <ImageProcessing.h>
 
 
+#define OPT (1)
 IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSource, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim,uint8_t u8Red,uint8_t u8Green,uint8_t u8Blue)
 {
     LCDC_TFT_TypeDef sLayer;
@@ -39,6 +40,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSou
 
     uint32_t u32Aux = 0;
 
+    uint8_t u8Mod=0;
     if((psLayerSource->variableType != VARIABLETYPE_enUSHORT) || (psLayerDest->variableType != VARIABLETYPE_enUSHORT))
             return IMAGPROC_enERROR;
     if(u16DimX0>u32LayerSourceWidthTotal)
@@ -63,9 +65,11 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSou
         u16DimHeight= u32LayerDestHeightTotal- u16DimY1;
 
     Cache__vWbInvL2 (psLayerSource->layerDataAddress, psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
-
-    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+32);
-    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+32);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
+    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint16_t* restrict pu16LayerSourceInitial =pu16LayerSource;
     uint16_t* restrict pu16LayerDestInitial =pu16LayerDest;
@@ -95,9 +99,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSou
         u8Blue=0x1F;
     u32Byte2=((u8Red)<<16)|(u8Green<<8)|(u8Blue);
 
-    #pragma UNROLL(12)
-    #pragma MUST_ITERATE (12,,12)
-    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
         u16Value=*((uint16_t*)pu16LayerSource);
         pu16LayerSource++;

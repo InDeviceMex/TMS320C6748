@@ -8,6 +8,9 @@
 
 #include "ImageProcessing.h"
 
+
+
+#define OPT (7)
 IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_TypeDef* psLayerSource2, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
 {
 
@@ -46,6 +49,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     uint8_t u8Red = 0;
     uint8_t u8Green = 0;
     uint8_t u8Blue = 0;
+
+    uint8_t u8Mod=0;
     if((psLayerSource1->variableType != VARIABLETYPE_enUSHORT) || (psLayerSource2->variableType != VARIABLETYPE_enUSHORT)
             || (psLayerDest->variableType != VARIABLETYPE_enUSHORT))
             return IMAGPROC_enERROR;
@@ -81,10 +86,13 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
 
     Cache__vWbInvL2 (psLayerSource1->layerDataAddress, psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal*2);
     Cache__vWbInvL2 (psLayerSource2->layerDataAddress, psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal*2);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
 
-    uint16_t* restrict pu16LayerSource1 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+32));
-    uint16_t* restrict pu16LayerSource2 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+32));
-    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+32));
+    uint16_t* restrict pu16LayerSource1 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
+    uint16_t* restrict pu16LayerSource2 =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
+    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
 
     uint16_t* restrict pu16LayerSource1Initial =pu16LayerSource1;
     uint16_t* restrict pu16LayerSource2Initial =pu16LayerSource2;
@@ -118,9 +126,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     _nassert ((int)(pu16LayerSource2) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    #pragma UNROLL(10)
-    #pragma MUST_ITERATE (10,,10)
-    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
         u16Value1=*((uint16_t*)pu16LayerSource1);
         u16Value2=*((uint16_t*)pu16LayerSource2);
