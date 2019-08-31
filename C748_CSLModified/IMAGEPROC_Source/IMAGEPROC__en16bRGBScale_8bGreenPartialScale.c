@@ -9,6 +9,7 @@
 
 #include <ImageProcessing.h>
 
+#define OPT (12)
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGreenPartialScale(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDestGreen,LCDC_DIMENSIONS_TypeDef sDim)
 {
 
@@ -57,9 +58,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGreenPartialScale(LCDC_TFT_TypeDef *
 
 
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
-
-    u8Mod=(u16DimWidth*u16DimHeight)%32;
-    u8Mod=32-u8Mod;
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
     uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDestGreen =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
@@ -83,12 +84,12 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGreenPartialScale(LCDC_TFT_TypeDef *
     _nassert ((int)(pu16LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDestGreen) % 8 == 0);
 
-    #pragma UNROLL(27)
-    #pragma MUST_ITERATE (27,,27)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
     for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
 
-        *((uint8_t*)pu8LayerDestGreen)=((*((uint16_t*)pu16LayerSource)&0x07E0)>>5);
+        *((uint8_t*)pu8LayerDestGreen)=((*((uint16_t*)pu16LayerSource)>>5)&0x003F);
         pu16LayerSource++;
         pu8LayerDestGreen++;
 

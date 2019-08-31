@@ -106,13 +106,12 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSou
         u16Value=*((uint16_t*)pu16LayerSource);
         pu16LayerSource++;
 
-        u8Blue_=u16Value&0x001F;
-        u16Green=u16Value&0x07E0;
-        u32Red =u16Value&0xF800;
 
-        u16Green<<=3;
-        u32Red <<=5;
+        u8Blue_=u16Value&0x001F;
+        u16Green=(u16Value<<3)&0x3f00;
+        u32Red =(u16Value<<5)&0x1F0000;
         u32Byte1=u32Red|u16Green|u8Blue_;
+
 
         u32Aux=_avgu4(u32Byte1,u32Byte2);
 
@@ -120,7 +119,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddPartialConstant(LCDC_TFT_TypeDef* psLayerSou
         u16Green=(u32Aux>>3)&0x07E0;
         u32Red =(u32Aux>>5)&0xF800;
 
-        *((uint16_t*)pu16LayerDest)= (uint16_t)((uint16_t)u32Red|u16Green|u8Blue_);
+        *((uint16_t*)pu16LayerDest)= (uint16_t)((uint16_t)u32Red+u16Green+u8Blue_);
         pu16LayerDest++;
     }
 

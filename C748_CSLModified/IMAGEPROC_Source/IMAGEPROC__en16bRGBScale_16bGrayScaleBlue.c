@@ -11,7 +11,7 @@
 
 #include <ImageProcessing.h>
 
-#define OPT (28)
+#define OPT (10)
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleBlue(LCDC_TFT_TypeDef* psLayerSource, LCDC_TFT_TypeDef* psLayerDest,LCDC_DIMENSIONS_TypeDef sDim)
 {
     LCDC_TFT_TypeDef sLayer;

@@ -132,24 +132,23 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     {
         u16Value1=*((uint16_t*)pu16LayerSource1);
         u16Value2=*((uint16_t*)pu16LayerSource2);
-        pu16LayerSource1++;
-        pu16LayerSource2++;
 
 
         u8Aux1_0=(u16Value1&0x001F);
-        u8Aux1_1=(u16Value1>>5)&0x003F;
-        u8Aux1_2=(u16Value1>>11);
-
-
         u8Aux2_0=(u16Value2&0x001F);
-        u8Aux2_1=(u16Value2>>5)&0x003F;
-        u8Aux2_2=(u16Value2>>11);
-
         u8Blue=(u8Aux1_0+u8Aux2_0+1)>>1;
+
+        u8Aux1_1=(u16Value1>>5)&0x003F;
+        u8Aux2_1=(u16Value2>>5)&0x003F;
         u8Green=(u8Aux1_1+u8Aux2_1+1)>>1;
+
+        u8Aux1_2=(u16Value1>>11);
+        u8Aux2_2=(u16Value2>>11);
         u8Red=(u8Aux1_2+u8Aux2_2+1)>>1;
 
-        *((uint16_t*)pu16LayerDest)=(u8Red<<11)|(u8Green<<5)|u8Blue;
+        *((uint16_t*)pu16LayerDest)=(u8Red<<11)+(u8Green<<5)+u8Blue;
+        pu16LayerSource1++;
+        pu16LayerSource2++;
         pu16LayerDest++;
     }
 

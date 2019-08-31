@@ -97,8 +97,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScale(LCDC_TFT_TypeDef* psLayer
         u16Aux=*((uint16_t*)pu16LayerSource);
         pu16LayerSource++;
 
-        u8Red= (u16Aux>>11)&0x1F;
-        u8Red<<=1;
+        u8Red= ((u16Aux>>11)&0x1F)<<1;
         u8Green= (u16Aux>>5)&0x3F;
         u8Blue=(u16Aux&0x1F)<<1;
 

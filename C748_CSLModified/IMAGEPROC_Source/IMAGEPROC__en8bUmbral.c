@@ -8,6 +8,7 @@
 
 #include <ImageProcessing.h>
 
+#define OPT (8)
 IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint8_t u8UmbralCenter, uint8_t u8UmbralLength)
 {
 
@@ -32,6 +33,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_
     uint8_t u8Aux = 0;
     uint8_t u8UmbralMin=0;
     uint8_t u8UmbralMax=255;
+    uint8_t u8Mod=0;
 
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
@@ -64,9 +66,11 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_
 
 
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal);
-
-    uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
+    uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint8_t* restrict pu8LayerSourceInitial =pu8LayerSource;
     uint8_t* restrict pu8LayerDestInitial =pu8LayerDest;
@@ -88,19 +92,19 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
 
-    #pragma UNROLL(16)
-    #pragma MUST_ITERATE (16,,16)
-    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
 
             u8Aux=*((uint8_t*)pu8LayerSource);
-            pu8LayerSource++;
             if((u8Aux>=u8UmbralMin) && (u8Aux<=u8UmbralMax))
                 u8Aux=0xFF;
             else
                 u8Aux=0;
 
             *((uint8_t*)pu8LayerDest)= u8Aux;
+            pu8LayerSource++;
             pu8LayerDest++;
     }
     Cache__vWbL2 ((uint32_t)pu8LayerDestInitial, u16DimHeight*u16DimWidth);

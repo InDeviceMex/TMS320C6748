@@ -10,6 +10,7 @@
 
 #include <ImageProcessing.h>
 
+#define OPT (4)
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRGBScale(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDestRed, LCDC_TFT_TypeDef * psLayerDestGreen,LCDC_TFT_TypeDef *psLayerDestBlue,LCDC_DIMENSIONS_TypeDef sDim)
 {
 
@@ -40,9 +41,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRGBScale(LCDC_TFT_TypeDef *psLayerSo
     uint16_t u16DimHeight=sDim.height;
 
     uint16_t u16Aux=0;
-    uint8_t u8Red = 0;
-    uint8_t u8Green = 0;
-    uint8_t u8Blue = 0;
+    uint8_t u8Mod=0;
 
     if((psLayerSource->variableType != VARIABLETYPE_enUSHORT) || (psLayerDestRed->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDestGreen->variableType != VARIABLETYPE_enUCHAR)
@@ -90,11 +89,13 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRGBScale(LCDC_TFT_TypeDef *psLayerSo
         u16DimHeight= u32LayerDestBlueHeightTotal- u16DimY3;
 
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
-
-    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerDestRed =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerDestGreen =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerDestBlue =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
+    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDestRed =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDestGreen =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDestBlue =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint16_t* restrict pu16LayerSourceInitial=pu16LayerSource;
     uint8_t* restrict pu8LayerDestRedInitial=pu8LayerDestRed;
@@ -121,19 +122,16 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRGBScale(LCDC_TFT_TypeDef *psLayerSo
     _nassert ((int)(pu8LayerDestBlue) % 8 == 0);
 
 
-    #pragma UNROLL(16)
-    #pragma MUST_ITERATE (16,,16)
-    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth);s32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
 
         u16Aux=*((uint16_t*)pu16LayerSource);
+        *((uint8_t*)pu8LayerDestRed)= (u16Aux>>8)&0xF8;
+        *((uint8_t*)pu8LayerDestGreen)= (u16Aux>>3)&0xFC;
+        *((uint8_t*)pu8LayerDestBlue)= (u16Aux<<3)&0xF8;
         pu16LayerSource++;
-        u8Red=(u16Aux>>8);
-        u8Green=(u16Aux>>3);
-        u8Blue=(u16Aux*8);
-        *((uint8_t*)pu8LayerDestRed)= u8Red&0xF8;
-        *((uint8_t*)pu8LayerDestGreen)= u8Green&0xFC;
-        *((uint8_t*)pu8LayerDestBlue)= u8Blue&0xF8;
         pu8LayerDestRed++;
         pu8LayerDestGreen++;
         pu8LayerDestBlue++;

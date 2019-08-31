@@ -9,6 +9,7 @@
 
 #include "ImageProcessing.h"
 
+#define OPT (16)
 IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_TypeDef* psLayerSource2, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
 {
 
@@ -36,6 +37,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* psLayerSource1,
     uint16_t u16DimHeight=sDim.height;
 
     int16_t s16Value = 0;
+    uint8_t u8Mod=0;
 
     if((psLayerSource1->variableType != VARIABLETYPE_enUCHAR) || (psLayerSource2->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
@@ -71,10 +73,12 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* psLayerSource1,
         u16DimHeight= u32LayerDestHeightTotal- u16DimY2;
     Cache__vWbInvL2 ((uint32_t)psLayerSource1->layerDataAddress,psLayerSource1->layerWidthTotal*psLayerSource1->layerHeightTotal);
     Cache__vWbInvL2 ((uint32_t)psLayerSource2->layerDataAddress,psLayerSource2->layerWidthTotal*psLayerSource2->layerHeightTotal);
-
-    uint8_t* restrict pu8LayerSource1 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerSource2 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
+    uint8_t* restrict pu8LayerSource1 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerSource2 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint8_t* restrict pu8LayerSource1Initial =pu8LayerSource1;
     uint8_t* restrict pu8LayerSource2Initial =pu8LayerSource2;
@@ -103,18 +107,18 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtractionABS(LCDC_TFT_TypeDef* psLayerSource1,
     _nassert ((int)(pu8LayerSource2) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
 
-    #pragma UNROLL(16)
-    #pragma MUST_ITERATE (16,,16)
-    for(u32Index=0;u32Index<(u16DimHeight*u16DimWidth);u32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(u32Index=0;u32Index<(u16DimHeight*u16DimWidth)+u8Mod;u32Index++)
     {
 
             s16Value=*((uint8_t*)pu8LayerSource1);
-            pu8LayerSource1++;
             s16Value-=*((uint8_t*)pu8LayerSource2);
-            pu8LayerSource2++;
             if(s16Value<0)
                 s16Value=-s16Value;
             *((uint8_t*)pu8LayerDest)=(uint8_t)s16Value;
+            pu8LayerSource1++;
+            pu8LayerSource2++;
             pu8LayerDest++;
     }
 

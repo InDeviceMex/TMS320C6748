@@ -10,6 +10,7 @@
 
 #include <ImageProcessing.h>
 
+#define OPT (16)
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRedPartialScale(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDestRed,LCDC_DIMENSIONS_TypeDef sDim)
 {
 
@@ -30,6 +31,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRedPartialScale(LCDC_TFT_TypeDef *ps
 
     uint16_t u16DimWidth=sDim.width;
     uint16_t u16DimHeight=sDim.height;
+
+    uint8_t u8Mod=0;
 
     if((psLayerSource->variableType != VARIABLETYPE_enUSHORT) || (psLayerDestRed->variableType != VARIABLETYPE_enUCHAR))
             return IMAGPROC_enERROR;
@@ -56,9 +59,11 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRedPartialScale(LCDC_TFT_TypeDef *ps
 
 
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
-
-    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+32);
-    uint8_t* restrict pu8LayerDestRed =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
+    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDestRed =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint16_t* restrict pu16LayerSourceInitial=pu16LayerSource;
     uint8_t* restrict pu8LayerDestRedInitial=pu8LayerDestRed;
@@ -80,9 +85,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRedPartialScale(LCDC_TFT_TypeDef *ps
     _nassert ((int)(pu16LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDestRed) % 8 == 0);
 
-    #pragma UNROLL(16)
-    #pragma MUST_ITERATE (16,,16)
-    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth);s32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
 
         *((uint8_t*)pu8LayerDestRed)=(*((uint8_t*)pu16LayerSource+1)>>3)&0x1F;

@@ -11,6 +11,7 @@
 
 
 
+#define OPT (4)
 IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef *psLayerDest,LCDC_DIMENSIONS_TypeDef sDim)
 {
 
@@ -32,6 +33,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayer
     uint16_t u16DimHeight=sDim.height;
     uint16_t u16All=0;
     uint8_t  u8Aux=0;
+    uint8_t u8Mod=0;
 
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR) || (psLayerDest->variableType != VARIABLETYPE_enUSHORT))
             return IMAGPROC_enERROR;
@@ -54,9 +56,11 @@ IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayer
     if((u16DimHeight+ u16DimY1)>u32LayerDestHeightTotal)
         u16DimHeight= u32LayerDestHeightTotal- u16DimY1;
     Cache__vWbInvL2 ((uint32_t)psLayerSource->layerDataAddress,psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal);
-
-    uint8_t* restrict pu8LayerSource=(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
-    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+32);
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    if(u8Mod)
+        u8Mod=OPT-u8Mod;
+    uint8_t* restrict pu8LayerSource=(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint8_t* restrict pu8LayerSourceInitial =pu8LayerSource;
     uint16_t* restrict pu16LayerDestInitial =pu16LayerDest;
@@ -79,16 +83,16 @@ IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayer
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    #pragma UNROLL(4)
-    #pragma MUST_ITERATE (4,,4)
-    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
+    #pragma UNROLL(OPT)
+    #pragma MUST_ITERATE (OPT,,OPT)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
     {
             u8Aux=*((uint8_t*)pu8LayerSource);
-            pu8LayerSource++;
             u16All =((uint16_t)u8Aux*256)&0xF800;
             u16All+=((uint16_t)u8Aux*8)&0x07E0;
             u16All+=((uint16_t)u8Aux>>3)&0x001F;
             *((uint16_t*)pu16LayerDest)= u16All;
+            pu8LayerSource++;
             pu16LayerDest++;
     }
     Cache__vWbL2 ((uint32_t)pu16LayerDestInitial,u16DimHeight*u16DimWidth*2);
