@@ -42,7 +42,7 @@ volatile uint16_t MAIN_sLayerBGBuffer[480][640];
 volatile uint16_t MAIN__u16CameraBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 0x8000)//2^15
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer1, ".MyBuffer")
 #pragma DATA_ALIGN(MAIN__u16ProcessingBuffer1, 0x8000)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer2, ".MyBuffer")
@@ -343,7 +343,7 @@ int main(void)
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[8]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
-
+/*
     MAIN_sSubLayerBG_Generic[9].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
     MAIN_sSubLayerBG_Generic[9].layerFont=&FONT_s8x8;
     MAIN_sSubLayerBG_Generic[9].layerColorFont=COLORS_enYELLOW;
@@ -356,7 +356,7 @@ int main(void)
     MAIN_sLayerBG_Number[9]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[9]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[9]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-
+*/
 
     MAIN_sSubLayerBG_Generic[10].layerType=LAYER_TYPE_enRECTANGLE_FILL;
     MAIN_sSubLayerBG_Generic[10].layerColorBG=COLORS_enORANGE;
@@ -461,7 +461,7 @@ int main(void)
     MAIN_sSubLayerBG_Generic[15].layerHeight=76;
     MAIN_sSubLayerBG_Generic[15].variableType=VARIABLETYPE_enUSHORT;
     MAIN_sLayerBG_Number[15]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[15]);
-
+/*
     MAIN_sSubLayerBG_Generic[16].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
     MAIN_sSubLayerBG_Generic[16].layerFont=&FONT_s8x8;
     MAIN_sSubLayerBG_Generic[16].layerColorFont=COLORS_enYELLOW;
@@ -487,7 +487,7 @@ int main(void)
     MAIN_sLayerBG_Number[17]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[17]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-
+*/
     MAIN_sSubLayerBG_Generic[18].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
     MAIN_sSubLayerBG_Generic[18].layerDataAddress=(uint32_t)&MAIN__u8ProcessingBuffer8;
     MAIN_sSubLayerBG_Generic[18].layerXInit=0;
@@ -558,7 +558,6 @@ int main(void)
 
     while(1)
     {
-
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[18],DimProcessing2);
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[19],DimProcessing2);
         IMAGEPROC__en8bSubtractionABS(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[20],DimProcessing2);

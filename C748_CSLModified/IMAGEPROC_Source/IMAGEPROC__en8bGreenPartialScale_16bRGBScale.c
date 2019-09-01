@@ -12,7 +12,7 @@
 
 #include "ImageProcessing.h"
 
-#define OPT (1)
+#define OPT (8)
 IMAGPROC_nStatus IMAGEPROC__en8bGreenPartialScale_16bRGBScale(LCDC_TFT_TypeDef*psLayerSourceGreen,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
 {
 
