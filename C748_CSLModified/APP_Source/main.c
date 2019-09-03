@@ -560,11 +560,10 @@ int main(void)
     {
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[18],DimProcessing2);
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[19],DimProcessing2);
-        IMAGEPROC__en8bSubtractionABS(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[20],DimProcessing2);
+        IMAGEPROC__en8bSubtraction(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[20],DimProcessing2);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[14],DimProcessing2);
-
         GPIO0_SET_DATA_R=GPIO_R_P13_MASK;
-        IMAGEPROC__en16bAddPartialConstant(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[15],DimProcessing2,0xFF,0,0);
+        IMAGEPROC__en16bAddMean(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
         GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[15]);

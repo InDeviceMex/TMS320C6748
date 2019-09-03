@@ -1,17 +1,18 @@
 /*
- * IMAGEPROC__en16bAdd.c
+ * IMAGEPROC__en16bAddMeanBlend.c
  *
- *  Created on: 21/08/2019
+ *  Created on: 02/09/2019
  *      Author: Lalo
  */
+
+
 
 #include "ImageProcessing.h"
 
 
 
-
-#define OPT1 (1)
-IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_TypeDef* psLayerSource2, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
+#define OPT1 (4)
+IMAGPROC_nStatus IMAGEPROC__en16bAddMeanBlend(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_TypeDef* psLayerSource2, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, float fBlend)
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
@@ -21,10 +22,10 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
      uint16_t u16Value1 = 0;
      uint16_t u16Value2 = 0;
      uint16_t u16Result = 0;
-     uint32_t u32Value = 0;
-     uint32_t u32ValueDot = 0;
-    float    fResult = 0;
-    float    fAuxValue = 0;
+     uint16_t u16Res= 0;
+    float    fAux1 = 0;
+    float    fAux2 = 0;
+    float    fBlend1 = 1-fBlend;
 
 
      uint16_t u16DimX0=sDim.X[0];
@@ -46,6 +47,11 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
     uint16_t u16DimHeight=sDim.height;
 
     uint8_t u8Mod=0;
+
+
+    if((fBlend>1.0) || (fBlend<0))
+        return IMAGPROC_enERROR;
+
     if((psLayerSource1->variableType != VARIABLETYPE_enUSHORT) || (psLayerSource2->variableType != VARIABLETYPE_enUSHORT)
             || (psLayerDest->variableType != VARIABLETYPE_enUSHORT))
             return IMAGPROC_enERROR;
@@ -121,7 +127,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
 
     #pragma UNROLL(OPT1)
     #pragma MUST_ITERATE (OPT1,,OPT1)
-    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
+    for(s32Index=0;s32Index<u16DimHeight*u16DimWidth;s32Index++)
     {
         u16Value1=*((uint16_t*)pu16LayerSource1);
         u16Value2=*((uint16_t*)pu16LayerSource2);
@@ -129,39 +135,37 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
         pu16LayerSource2++;
 
 
-        u32Value =(u16Value1&0x1F)<<16;
-        u32Value|=(u16Value2&0x1F);
-        u32ValueDot=(uint32_t)_dotp2(u32Value,u32Value);
-        u32ValueDot>>=1;
-        fAuxValue = _rsqrsp((float)u32ValueDot);
-        fAuxValue = fAuxValue * (1.5f - ((float)u32ValueDot * fAuxValue * fAuxValue * 0.5f));
-        fAuxValue = fAuxValue * (1.5f - ((float)u32ValueDot * fAuxValue * fAuxValue * 0.5f));
-        fResult = (float)u32ValueDot * fAuxValue;
+        fAux1=(float)((u16Value1&0x1F));
+        fAux2=(float)((u16Value2&0x1F));
+        fAux1*=fBlend;
+        fAux2*=fBlend1;
+        fAux1+=fAux2;
 
-        u16Result=(uint16_t)fResult;
+        u16Result=(uint16_t)fAux1;
 
-        u32Value =(u16Value1&0x07E0)<<11;
-        u32Value|=(u16Value2&0x07E0)>>5;
 
-        u32ValueDot=(uint32_t)_dotp2(u32Value,u32Value);
-        u32ValueDot>>=1;
-        fAuxValue = _rsqrsp((float)u32ValueDot);
-        fAuxValue = fAuxValue * (1.5f - ((float)u32ValueDot * fAuxValue * fAuxValue * 0.5f));
-        fAuxValue = fAuxValue * (1.5f - ((float)u32ValueDot * fAuxValue * fAuxValue * 0.5f));
-        fResult = (float)u32ValueDot * fAuxValue;
+        fAux1=(float)((u16Value1&0x07E0)>>5);
+        fAux2=(float)((u16Value2&0x07E0)>>5);
+        fAux1*=fBlend;
+        fAux2*=fBlend1;
+        fAux1+=fAux2;
+        u16Res=(uint16_t)fAux1;
+        u16Res<<=5;
 
-        u16Result|=(uint16_t)fResult<<5;
+        u16Result|=u16Res;
 
-        u32Value =(u16Value1&0xF800)<<5;
-        u32Value|=(u16Value2&0xF800)>>11;
-        u32ValueDot=(uint32_t)_dotp2(u32Value,u32Value);
-        u32ValueDot>>=1;
-        fAuxValue = _rsqrsp((float)u32ValueDot);
-        fAuxValue = fAuxValue * (1.5f - ((float)u32ValueDot * fAuxValue * fAuxValue * 0.5f));
-        fAuxValue = fAuxValue * (1.5f - ((float)u32ValueDot * fAuxValue * fAuxValue * 0.5f));
-        fResult = (float)u32ValueDot * fAuxValue;
 
-        u16Result|=(uint16_t)fResult<<11;
+        fAux1=(float)((u16Value1&0xF800)>>11);
+        fAux2=(float)((u16Value2&0xF800)>>11);
+        fAux1*=fBlend;
+        fAux2*=fBlend1;
+        fAux1+=fAux2;
+        u16Res=(uint16_t)fAux1;
+        u16Res<<=11;
+
+        u16Result|=u16Res;
+
+
 
         *((uint16_t*)pu16LayerDest)= u16Result;
         pu16LayerDest++;
@@ -183,4 +187,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_T
     free(pu16LayerSource1Initial);
     return IMAGPROC_enOK;
 }
+
+
+
+
+
 
