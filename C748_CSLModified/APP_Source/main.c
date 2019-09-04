@@ -88,6 +88,7 @@ volatile float MAIN__fProcessingBuffer13[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 float fCountOld=0,fCountNew=0;
 volatile float fValue=0;
+uint8_t u8Count=0;
 
 char     MAIN_cStringBG[30];
 uint16_t MAIN_u16LayerBG_BGX[2]={0};
@@ -474,7 +475,7 @@ int main(void)
     MAIN_sLayerBG_Number[16]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[16]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-
+*/
     MAIN_sSubLayerBG_Generic[17].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
     MAIN_sSubLayerBG_Generic[17].layerFont=&FONT_s8x8;
     MAIN_sSubLayerBG_Generic[17].layerColorFont=COLORS_enYELLOW;
@@ -487,7 +488,7 @@ int main(void)
     MAIN_sLayerBG_Number[17]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[17]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-*/
+
     MAIN_sSubLayerBG_Generic[18].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
     MAIN_sSubLayerBG_Generic[18].layerDataAddress=(uint32_t)&MAIN__u8ProcessingBuffer8;
     MAIN_sSubLayerBG_Generic[18].layerXInit=0;
@@ -562,9 +563,20 @@ int main(void)
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[19],DimProcessing2);
         IMAGEPROC__en8bSubtraction(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[20],DimProcessing2);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[14],DimProcessing2);
+
+        fCountOld=SysTick__fGetTimeUs();
         GPIO0_SET_DATA_R=GPIO_R_P13_MASK;
         IMAGEPROC__en16bAddMean(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[15],DimProcessing2);
         GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
+        fCountNew=SysTick__fGetTimeUs();
+        u8Count++;
+        if((u8Count%150)==0)
+        {
+            u8Count=0;
+            LTDC__u64Layer_Printf("%f",&MAIN_cTime2_String[5],(double)(fCountNew-fCountOld));
+            LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
+            SysTick__vRestart();
+        }
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[15]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[0]);
@@ -573,7 +585,7 @@ int main(void)
     }
 }
 
-// fCountOld=SysTick__fGetTimeUs();
+
 /*      fCountNew=SysTick__fGetTimeUs();
   if(u8State[0]>0)
   {

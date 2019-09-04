@@ -1,17 +1,16 @@
 /*
- * IMAGEPROC__en8bAddMean.c
+ * IMAGEPROC__en8bAddMeanBlend.c
  *
  *  Created on: 03/09/2019
  *      Author: Lalo
  */
 
 
-
 #include "ImageProcessing.h"
 
 
-#define OPT (88)
-IMAGPROC_nStatus IMAGEPROC__en8bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_TypeDef* psLayerSource2, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint8_t u8Umbral)
+#define OPT (8)
+IMAGPROC_nStatus IMAGEPROC__en8bAddMeanBlend(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_TypeDef* psLayerSource2, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint8_t u8Umbral, float fBlend)
 {
 
     LCDC_TFT_TypeDef sLayer;
@@ -36,12 +35,20 @@ IMAGPROC_nStatus IMAGEPROC__en8bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TF
     uint16_t u16DimWidth=sDim.width;
     uint16_t u16DimHeight=sDim.height;
 
-    uint16_t u16Value = 0;
     uint8_t u8Value1 = 0;
     uint8_t u8Value2 = 0;
     uint8_t  u8Result = 0;
 
+    float fBlend1= 1-fBlend;
+    float fValue1= 0;
+    float fValue2= 0;
+
     uint8_t u8Mod=0;
+
+
+    if((fBlend>1.0) || (fBlend<0))
+        return IMAGPROC_enERROR;
+
     if((psLayerSource1->variableType != VARIABLETYPE_enUCHAR) || (psLayerSource2->variableType != VARIABLETYPE_enUCHAR)
             || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
             return IMAGPROC_enERROR;
@@ -126,8 +133,14 @@ IMAGPROC_nStatus IMAGEPROC__en8bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TF
         pu8LayerSource1++;
         pu8LayerSource2++;
 
-        u16Value=(u8Value1+u8Value2+1)>>1;
-        u8Result=(uint8_t)u16Value;
+
+        fValue1=(float)u8Value1;
+        fValue2=(float)u8Value2;
+
+        fValue1*=fBlend;
+        fValue1+=fValue2*fBlend1;
+
+        u8Result=(uint8_t)fValue1;
         if(u8Result>u8Umbral)
             u8Result=u8Umbral;
 
@@ -151,6 +164,13 @@ IMAGPROC_nStatus IMAGEPROC__en8bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TF
     free(pu8LayerSource1Initial);
     return IMAGPROC_enOK;
 }
+
+
+
+
+
+
+
 
 
 

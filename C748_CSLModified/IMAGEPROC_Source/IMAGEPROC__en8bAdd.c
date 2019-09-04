@@ -150,8 +150,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_Ty
     Cache__vWbL2 ((uint32_t)pu8LayerDestInitial, u16DimHeight*u16DimWidth);
 
     sLayer.variableType=VARIABLETYPE_enUCHAR;
-    sDimLayer.X[1]=u16DimX1;
-    sDimLayer.Y[1]=u16DimY1;
+    sDimLayer.X[1]=u16DimX2;
+    sDimLayer.Y[1]=u16DimY2;
     sDimLayer.X[0]=0;
     sDimLayer.Y[0]=0;
     sLayer.layerDataAddress=(uint32_t)pu8LayerDestInitial;
