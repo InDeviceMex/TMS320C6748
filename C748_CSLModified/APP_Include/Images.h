@@ -9,6 +9,7 @@
 #define APP_INCLUDE_IMAGES_H_
 
 #include "stdint.h"
+extern const uint16_t manos240x320[76800];
 extern const uint8_t gImage_del[18240];
 extern const uint8_t gImage_bic[18240] ;
 extern const uint8_t gImage_comic[614400];

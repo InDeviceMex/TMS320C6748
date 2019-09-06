@@ -19,6 +19,15 @@ typedef enum
     IMAGPROC_enOK = 0,
     IMAGPROC_enERROR = 1,
 }IMAGPROC_nStatus;
+typedef enum
+{
+    IMAGEPROC_enNORM1=0,
+    IMAGEPROC_enNORM2=1,
+    IMAGEPROC_enNORM3=2,
+    IMAGEPROC_enNORM4=3
+
+}IMAGEPROC_nNormalize;
+
 
 
 IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
@@ -71,9 +80,19 @@ IMAGPROC_nStatus IMAGEPROC__en8bAddMeanBlend(LCDC_TFT_TypeDef* psLayerSource1,LC
 IMAGPROC_nStatus IMAGEPROC__en8bAddConstant(LCDC_TFT_TypeDef* psLayerSource, LCDC_TFT_TypeDef* psLayerDest, LCDC_DIMENSIONS_TypeDef sDim,uint8_t u8Constant, uint8_t u8Umbral);
 
 //todo consider HSI subtraction, addition, multiplication and division
+// todo uint32_t IMAGEPROC_Rotation90Degree(LTDC_TFT_TypeDef *layerSource, LTDC_TFT_TypeDef *layerDest,LTDC_DIMENSIONS_TypeDef dim);
 
 
 IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef * psLayerSource,LCDC_TFT_TypeDef * psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint8_t u8UmbralCenter, uint8_t u8UmbralLength);
+IMAGPROC_nStatus IMAGEPROC__en16bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, uint16_t u16UmbralCenter, uint8_t u8UmbralLengthRed, uint8_t u8UmbralLengthGreen, uint8_t u8UmbralLengthBlue);
+
+IMAGPROC_nStatus IMAGEPROC__en16bCrom(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bWhitePatch(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bGrayWorld(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldMax(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldSquare(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en16bMaxRGB(LCDC_TFT_TypeDef *psLayerSource,LCDC_DIMENSIONS_TypeDef sDim, float* fRGB,uint32_t u32Norm);
+IMAGPROC_nStatus IMAGEPROC__en16bMeanNormRGB(LCDC_TFT_TypeDef *psLayerSource,LCDC_DIMENSIONS_TypeDef sDim, float* fRGB,uint32_t u32Norm);
 
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */

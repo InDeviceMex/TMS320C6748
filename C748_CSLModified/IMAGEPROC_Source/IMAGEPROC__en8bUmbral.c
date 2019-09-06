@@ -89,6 +89,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_
     sLayer.variableType=VARIABLETYPE_enUCHAR;
     sLayer.layerDataAddress=(uint32_t)pu8LayerSource;
     LCDC__enLayer_Copy(psLayerSource,&sLayer,sDimLayer);
+
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
 
