@@ -65,8 +65,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bRedPartialScale(LCDC_TFT_TypeDef *ps
     uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDestRed =(uint8_t *) memalign(8,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
-    uint16_t* restrict pu16LayerSourceInitial=pu16LayerSource;
-    uint8_t* restrict pu8LayerDestRedInitial=pu8LayerDestRed;
+    uint16_t* pu16LayerSourceInitial=pu16LayerSource;
+    uint8_t* pu8LayerDestRedInitial=pu8LayerDestRed;
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource,u16DimWidth*u16DimHeight*2);
     sLayer.layerWidthTotal=u16DimWidth;

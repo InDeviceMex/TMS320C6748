@@ -65,7 +65,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bMeanNormRGB(LCDC_TFT_TypeDef *psLayerSource,LCD
     if(u8Mod)
         u8Mod=OPT-u8Mod;
     uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint16_t* restrict pu16LayerSourceInitial =pu16LayerSource;
+    uint16_t* pu16LayerSourceInitial =pu16LayerSource;
 
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource,u16DimWidth*u16DimHeight*2);

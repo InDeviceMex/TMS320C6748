@@ -94,9 +94,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bAddMean(LCDC_TFT_TypeDef* psLayerSource1,LCDC_T
     uint16_t* restrict pu16LayerSource2 =(uint16_t *) memalign(8,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
     uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(8,sizeof(uint16_t)*(u16DimWidth*u16DimHeight+u8Mod));
 
-    uint16_t* restrict pu16LayerSource1Initial =pu16LayerSource1;
-    uint16_t* restrict pu16LayerSource2Initial =pu16LayerSource2;
-    uint16_t* restrict pu16LayerDestInitial =pu16LayerDest;
+    uint16_t* pu16LayerSource1Initial =pu16LayerSource1;
+    uint16_t* pu16LayerSource2Initial =pu16LayerSource2;
+    uint16_t* pu16LayerDestInitial =pu16LayerDest;
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource1,u16DimWidth*u16DimHeight*2);
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource2,u16DimWidth*u16DimHeight*2);

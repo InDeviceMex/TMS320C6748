@@ -68,8 +68,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldMax(LCDC_TFT_TypeDef *psLayerSource,LC
     uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
 
-    uint16_t* restrict pu16LayerSourceInitial =pu16LayerSource;
-    uint16_t* restrict pu16LayerDestInitial =pu16LayerDest;
+    uint16_t* pu16LayerSourceInitial =pu16LayerSource;
+    uint16_t* pu16LayerDestInitial =pu16LayerDest;
 
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource,u16DimWidth*u16DimHeight*2);
