@@ -14,6 +14,7 @@
 #include <LCDC.h>
 #define PI (3.14159265358979323846)
 
+#define PIXs(im,x,y) *((uint16_t*)im->layerDataAddress+(x)+((y)*im->layerWidthTotal))
 typedef enum
 {
     IMAGPROC_enOK = 0,
@@ -27,8 +28,6 @@ typedef enum
     IMAGEPROC_enNORM4=3
 
 }IMAGEPROC_nNormalize;
-
-
 
 IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__enGetHSI16bRGBScale(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);

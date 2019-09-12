@@ -1145,6 +1145,14 @@ typedef __IO struct
 }LCDC_DIMENSIONS_TypeDef;
 
 
+typedef struct {
+    uint32_t area;
+    uint16_t Xmin;
+    uint16_t Ymin;
+    uint16_t Xmax;
+    uint16_t Ymax;
+}LCDC_AREA_TypeDef;
+
 typedef __IO struct
 {
     uint32_t X          ;

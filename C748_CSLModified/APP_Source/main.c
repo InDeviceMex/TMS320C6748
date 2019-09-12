@@ -38,37 +38,37 @@ volatile uint16_t MAIN_sLayerBGBuffer[480][640];
 
 
 #pragma DATA_SECTION(MAIN__u16CameraBuffer, ".MyData")
-#pragma DATA_ALIGN(MAIN__u16CameraBuffer, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16CameraBuffer, 8)
 volatile uint16_t MAIN__u16CameraBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 0x8000)//2^15
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer, 8)//2^15
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer1, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer1, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer1, 8)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer2, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer2, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer2, 8)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer3, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer3, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer3, 8)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer4, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer4, 0x8000)
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer4, 8)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer5, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer5, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer5, 8)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer6, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer6, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer6, 8)
 #pragma DATA_SECTION(MAIN__u16ProcessingBuffer7, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer7, 0x8000)
+#pragma DATA_ALIGN(MAIN__u16ProcessingBuffer7, 8)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer8, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer8, 0x8000)
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer8, 8)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer9, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer9, 0x8000)
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer9, 8)
 #pragma DATA_SECTION(MAIN__u8ProcessingBuffer10, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer10, 0x8000)
+#pragma DATA_ALIGN(MAIN__u8ProcessingBuffer10, 8)
 #pragma DATA_SECTION(MAIN__fProcessingBuffer11, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__fProcessingBuffer11, 0x8000)
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer11, 8)
 #pragma DATA_SECTION(MAIN__fProcessingBuffer12, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__fProcessingBuffer12, 0x8000)
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer12, 8)
 #pragma DATA_SECTION(MAIN__fProcessingBuffer13, ".MyBuffer")
-#pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 0x8000)
+#pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 8)
 
 volatile uint16_t MAIN__u16ProcessingBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer1[CAMERA_HEIGHT][CAMERA_WIDTH];
@@ -76,8 +76,8 @@ volatile uint16_t MAIN__u16ProcessingBuffer2[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer3[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer4[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer5[CAMERA_HEIGHT][CAMERA_WIDTH];
-volatile uint16_t MAIN__u16ProcessingBuffer6[120][120];
-volatile uint16_t MAIN__u16ProcessingBuffer7[120][120];
+volatile uint16_t MAIN__u16ProcessingBuffer6[CAMERA_HEIGHT][CAMERA_WIDTH];
+volatile uint16_t MAIN__u16ProcessingBuffer7[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer8[120][76];
 volatile uint8_t MAIN__u8ProcessingBuffer9[120][76];
 volatile uint8_t MAIN__u8ProcessingBuffer10[120][76];
@@ -462,6 +462,19 @@ int main(void)
     MAIN_sSubLayerBG_Generic[15].layerHeight=CAMERA_HEIGHT;
     MAIN_sSubLayerBG_Generic[15].variableType=VARIABLETYPE_enUSHORT;
     MAIN_sLayerBG_Number[15]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[15]);
+
+    MAIN_sSubLayerBG_Generic[16].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[16].layerDataAddress=(uint32_t)&gImage_manos240x240;
+    MAIN_sSubLayerBG_Generic[16].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[16].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[16].layerBGXInit=5;
+    MAIN_sSubLayerBG_Generic[16].layerBGYInit=150;
+    MAIN_sSubLayerBG_Generic[16].layerWidthTotal=CAMERA_WIDTH;
+    MAIN_sSubLayerBG_Generic[16].layerHeightTotal=CAMERA_HEIGHT;
+    MAIN_sSubLayerBG_Generic[16].layerWidth=CAMERA_WIDTH;
+    MAIN_sSubLayerBG_Generic[16].layerHeight=CAMERA_HEIGHT;
+    MAIN_sSubLayerBG_Generic[16].variableType=VARIABLETYPE_enUSHORT;
+    MAIN_sLayerBG_Number[16]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[16]);
 /*
     MAIN_sSubLayerBG_Generic[16].layerType=LAYER_TYPE_enSTRING_SIMPLE_BACKGROUND;
     MAIN_sSubLayerBG_Generic[16].layerFont=&FONT_s8x8;
@@ -490,16 +503,16 @@ int main(void)
     LCDC__enLayerBG_RefreshSubLayer(1);
 
     MAIN_sSubLayerBG_Generic[18].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
-    MAIN_sSubLayerBG_Generic[18].layerDataAddress=(uint32_t)&MAIN__u8ProcessingBuffer8;
+    MAIN_sSubLayerBG_Generic[18].layerDataAddress=(uint32_t)&MAIN__u16ProcessingBuffer1;
     MAIN_sSubLayerBG_Generic[18].layerXInit=0;
     MAIN_sSubLayerBG_Generic[18].layerYInit=0;
-    MAIN_sSubLayerBG_Generic[18].layerBGXInit=120+5+5+120+5+120+5+120+5;
-    MAIN_sSubLayerBG_Generic[18].layerBGYInit=27;
+    MAIN_sSubLayerBG_Generic[18].layerBGXInit=120+5+5;
+    MAIN_sSubLayerBG_Generic[18].layerBGYInit=150;
     MAIN_sSubLayerBG_Generic[18].layerWidthTotal=120;
-    MAIN_sSubLayerBG_Generic[18].layerHeightTotal=76;
+    MAIN_sSubLayerBG_Generic[18].layerHeightTotal=120;
     MAIN_sSubLayerBG_Generic[18].layerWidth=120;
-    MAIN_sSubLayerBG_Generic[18].layerHeight=76;
-    MAIN_sSubLayerBG_Generic[18].variableType=VARIABLETYPE_enUCHAR;
+    MAIN_sSubLayerBG_Generic[18].layerHeight=120;
+    MAIN_sSubLayerBG_Generic[18].variableType=VARIABLETYPE_enUSHORT;
     MAIN_sLayerBG_Number[18]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[18]);
 
     MAIN_sSubLayerBG_Generic[19].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
@@ -537,14 +550,12 @@ int main(void)
     DimProcessing.width=CAMERA_WIDTH;
     DimProcessing.height=CAMERA_HEIGHT;
 
-    DimProcessing1.X[0]=60;
+    DimProcessing1.X[0]=0;
     DimProcessing1.X[1]=0;
-    DimProcessing1.X[2]=0;
-    DimProcessing1.Y[0]=100;
+    DimProcessing1.Y[0]=0;
     DimProcessing1.Y[1]=0;
-    DimProcessing1.Y[2]=0;
     DimProcessing1.width=CAMERA_WIDTH;
-    DimProcessing1.height=CAMERA_HEIGHT;
+    DimProcessing1.height=40;
 
     DimProcessing2.X[0]=0;
     DimProcessing2.X[1]=0;
@@ -560,12 +571,34 @@ int main(void)
     while(1)
     {
         IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
+        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[12],DimProcessing,0x7204,0xE,0x14,0xb);
+
+
+        DimProcessing1.Y[0]=0;
+        DimProcessing1.Y[1]=0;
+        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
+
+
+        DimProcessing1.Y[0]=40;
+        DimProcessing1.Y[1]=40;
+        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
+
+        DimProcessing1.Y[0]=80;
+        DimProcessing1.Y[1]=80;
+        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
+
+        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
+
+
         IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[13],DimProcessing);
+        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
         IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[14],DimProcessing);
+        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[14],&MAIN_sSubLayerBG_Generic[14],DimProcessing,0x7204,0xE,0x14,0xb);
 
         fCountOld=SysTick__fGetTimeUs();
         GPIO0_SET_DATA_R=GPIO_R_P13_MASK;
         IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
+        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[15],&MAIN_sSubLayerBG_Generic[15],DimProcessing,0x7204,0xE,0x13,0xa);
         GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
         fCountNew=SysTick__fGetTimeUs();
         u8Count++;
@@ -580,6 +613,8 @@ int main(void)
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[13]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[15]);
+        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
+        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[18]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[0]);
         LCDC__enLayerBG_RefreshSubLayer(1);
 

@@ -61,8 +61,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_8bGreenPartialScale(LCDC_TFT_TypeDef *
     u8Mod=(u16DimWidth*u16DimHeight)%OPT;
     if(u8Mod)
         u8Mod=OPT-u8Mod;
-    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint8_t* restrict pu8LayerDestGreen =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* restrict pu8LayerDestGreen =(uint8_t *) memalign(8,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint16_t* restrict pu16LayerSourceInitial=pu16LayerSource;
     uint8_t* restrict pu8LayerDestGreenInitial=pu8LayerDestGreen;
