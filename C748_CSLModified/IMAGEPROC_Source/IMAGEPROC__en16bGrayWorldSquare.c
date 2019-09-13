@@ -5,6 +5,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldSquare(LCDC_TFT_TypeDef *psLayerSource
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
+    LCDC_TFT_TypeDef sLayer1;
+    LCDC_DIMENSIONS_TypeDef sDimLayer1;
     int32_t s32Index=0;
 
     uint16_t u16DimX0=sDim.X[0];
@@ -59,8 +61,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldSquare(LCDC_TFT_TypeDef *psLayerSource
     u8Mod=(u16DimWidth*u16DimHeight)%OPT;
     if(u8Mod)
         u8Mod=OPT-u8Mod;
-    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint16_t* pu16LayerSourceInitial =pu16LayerSource;
     uint16_t* pu16LayerDestInitial =pu16LayerDest;
@@ -82,7 +84,19 @@ IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldSquare(LCDC_TFT_TypeDef *psLayerSource
     _nassert ((int)(pu16LayerSource) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    IMAGEPROC__en16bMeanNormRGB(psLayerSource,sDim,fRGB,IMAGEPROC_enNORM3);
+
+    sDimLayer1.width=u16DimWidth;
+    sDimLayer1.height=u16DimHeight;
+    sDimLayer1.X[1]=0;
+    sDimLayer1.Y[1]=0;
+    sDimLayer1.X[0]=0;
+    sDimLayer1.Y[0]=0;
+    sLayer1.layerWidthTotal=u16DimWidth;
+    sLayer1.layerHeightTotal=u16DimHeight;
+    sLayer1.variableType=VARIABLETYPE_enUSHORT;
+    sLayer1.layerDataAddress=(uint32_t)pu16LayerSource;
+
+    IMAGEPROC__en16bMeanNormRGB(&sLayer1,sDimLayer1,fRGB,IMAGEPROC_enNORM3);
     #pragma UNROLL(OPT)
     #pragma MUST_ITERATE (OPT,,OPT)
     for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)

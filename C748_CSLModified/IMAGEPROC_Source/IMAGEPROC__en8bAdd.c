@@ -84,9 +84,9 @@ IMAGPROC_nStatus IMAGEPROC__en8bAdd(LCDC_TFT_TypeDef* psLayerSource1,LCDC_TFT_Ty
     if(u8Mod)
         u8Mod=OPT-u8Mod;
 
-    uint8_t* restrict pu8LayerSource1 =(uint8_t *) memalign(8,sizeof(uint8_t)*(u16DimWidth*u16DimHeight+u8Mod));
-    uint8_t* restrict pu8LayerSource2 =(uint8_t *) memalign(8,sizeof(uint8_t)*(u16DimWidth*u16DimHeight+u8Mod));
-    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(8,sizeof(uint8_t)*(u16DimWidth*u16DimHeight+u8Mod));
+    uint8_t* restrict pu8LayerSource1 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*(u16DimWidth*u16DimHeight+u8Mod));
+    uint8_t* restrict pu8LayerSource2 =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*(u16DimWidth*u16DimHeight+u8Mod));
+    uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*(u16DimWidth*u16DimHeight+u8Mod));
 
     uint8_t* restrict pu8LayerSource1Initial =pu8LayerSource1;
     uint8_t* restrict pu8LayerSource2Initial =pu8LayerSource2;

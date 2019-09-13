@@ -62,8 +62,8 @@ IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScaleBlue(LCDC_TFT_TypeDef* psL
     if(u8Mod)
         u8Mod=OPT-u8Mod;
 
-    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(8,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
 
     uint16_t* pu16LayerSourceInitial =pu16LayerSource;
     uint16_t* pu16LayerDestInitial =pu16LayerDest;
