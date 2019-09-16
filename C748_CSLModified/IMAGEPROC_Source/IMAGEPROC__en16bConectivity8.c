@@ -12,8 +12,8 @@ typedef struct {
     uint16_t* stack;
     uint16_t width;
     uint16_t height;
-    uint16_t input;
-    uint16_t output;
+    uint32_t input;
+    uint32_t output;
     int16_t labelNo;
     uint16_t x;
     uint16_t y;
@@ -109,13 +109,13 @@ void vLabelComponent8(CONECTIVITY8_TypeDef sConectivity,LCDC_AREA_TypeDef* sArea
 }
 
 #define OPT (1)
+#define OPT1 (16) //4,8,10,12
 IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea)
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
 
-    int32_t s32Width=0,s32Height=0,s32HeightDest=0;
-    uint32_t u32LayerAddressDest;
+    int32_t s32Width=0,s32Height=0;
 
     uint16_t u16DimX0=sDim.X[0];
     uint16_t u16DimX1=sDim.X[1];
@@ -130,9 +130,11 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
 
     uint16_t u16DimWidth=sDim.width;
     uint16_t u16DimHeight=sDim.height;
+    uint16_t u16Value=0;
 
+    int32_t s32Index;
 
-    LCDC_AREA_TypeDef* psActualArea=sArea;
+    LCDC_AREA_TypeDef*volatile psActualArea=&sArea[0];
     int32_t s32LabelNo = 0;
     CONECTIVITY8_TypeDef sConectivity;
 
@@ -161,15 +163,15 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
       u16DimHeight= u32LayerDestHeightTotal- u16DimY1;
 
     Cache__vWbInvL2 (psLayerSource->layerDataAddress, psLayerSource->layerWidthTotal*psLayerSource->layerHeightTotal*2);
-    u8Mod=(u16DimWidth*u16DimHeight)%OPT;
+    u8Mod=(u16DimWidth*u16DimHeight)%OPT1;
     if(u8Mod)
-      u8Mod=OPT-u8Mod;
-    uint16_t* volatile restrict pu16LayerSource =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint16_t* volatile restrict pu16LayerDest =(uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint16_t* volatile restrict pu16LayerStack = (uint16_t*) memalign(1024*1024,5*sizeof(uint16_t)*(u16DimWidth*u16DimHeight + 1));
-    uint16_t* pu16LayerSourceInitial =pu16LayerSource;
-    uint16_t* pu16LayerDestInitial =pu16LayerDest;
-    uint16_t* volatile restrict pu16LayerStackInitial =pu16LayerStack;
+      u8Mod=OPT1-u8Mod;
+    uint16_t* restrict pu16LayerSource = (uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerDest   = (uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint16_t* restrict pu16LayerStack  = (uint16_t *) memalign(1024*1024,5*sizeof(uint16_t)*(u16DimWidth*u16DimHeight + 1));
+    uint16_t* pu16LayerSourceInitial = pu16LayerSource;
+    uint16_t* pu16LayerDestInitial   = pu16LayerDest;
+    uint16_t* pu16LayerStackInitial  = pu16LayerStack;
 
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource,u16DimWidth*u16DimHeight*2);
@@ -188,45 +190,55 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
 
 
     sLayer.layerDataAddress=(uint32_t)pu16LayerDest;
+    Cache__vWbInvL2 ((uint32_t)pu16LayerDest,u16DimWidth*u16DimHeight*2);
     LCDC__vLayer_Clear(&sLayer,0);
 
     _nassert ((int)(pu16LayerStack) % 8 == 0);
     _nassert ((int)(pu16LayerSource) % 8 == 0);
     _nassert ((int)(pu16LayerDest) % 8 == 0);
 
-    #pragma UNROLL(OPT)
-    #pragma MUST_ITERATE (OPT,,OPT)
     for ( s32Height = 0; s32Height < u16DimHeight; s32Height++)
     {
-      for ( s32Width = 0; s32Width < u16DimWidth; s32Width++)
-      {
-          if(*((uint16_t*)pu16LayerSource+s32Width+(s32Height*u16DimWidth))==0) continue;
-          if(*((uint16_t*)pu16LayerDest+s32Width+(s32Height*u16DimWidth))!=0) continue;
-          /* New component found */
-          psActualArea->Xmin=s32Width;
-          psActualArea->Xmax=s32Width;
-          psActualArea->Ymin=s32Height;
-          psActualArea->Ymax=s32Height;
-          psActualArea->area=1;
-          s32LabelNo++;
+        #pragma UNROLL(OPT)
+        #pragma MUST_ITERATE (OPT,,OPT)
+          for ( s32Width = 0; s32Width < u16DimWidth; s32Width++)
+          {
+              s32Index=s32Width+(s32Height*u16DimWidth);
+              if(*((uint16_t*)pu16LayerSource+s32Index)==0) continue;
+              if(*((uint16_t*)pu16LayerDest+s32Index)!=0) continue;
+              /* New component found */
+              psActualArea->Xmin=(uint16_t)s32Width;
+              psActualArea->Xmax=(uint16_t)s32Width;
+              psActualArea->Ymin=(uint16_t)s32Height;
+              psActualArea->Ymax=(uint16_t)s32Height;
+              psActualArea->area=1;
+              s32LabelNo++;
 
-          sConectivity.stack=pu16LayerStack;
-          sConectivity.width=u16DimWidth;
-          sConectivity.height=u16DimHeight;
-          sConectivity.input=psLayerSource->layerDataAddress;
-          sConectivity.output=psLayerDest->layerDataAddress;
-          sConectivity.labelNo=s32LabelNo;
-          sConectivity.x=s32Width;
-          sConectivity.y=s32Height;
+              sConectivity.stack=pu16LayerStack;
+              sConectivity.width=u16DimWidth;
+              sConectivity.height=u16DimHeight;
+              sConectivity.input=(uint32_t)pu16LayerSource;
+              sConectivity.output=(uint32_t)pu16LayerDest;
+              sConectivity.labelNo=s32LabelNo;
+              sConectivity.x=(uint16_t)s32Width;
+              sConectivity.y=(uint16_t)s32Height;
 
-          vLabelComponent8(sConectivity,psActualArea);
-          psActualArea++;
+              vLabelComponent8(sConectivity,psActualArea);
+              psActualArea++;
 
-      }
-
+          }
     }
 
 
+
+    #pragma UNROLL(OPT1)
+    #pragma MUST_ITERATE (OPT1,,OPT1)
+    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)+u8Mod;s32Index++)
+    {
+       u16Value=*((uint16_t*)pu16LayerDest);
+      *((uint16_t*)pu16LayerDest)=u16Value*0x1061 +u16Value*7500;
+      pu16LayerDest++;
+    }
     Cache__vWbL2 ((uint32_t)pu16LayerDestInitial, u16DimHeight*u16DimWidth*2);
 
     sLayer.variableType=VARIABLETYPE_enUSHORT;
@@ -237,8 +249,9 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
     sLayer.layerDataAddress=(uint32_t)pu16LayerDestInitial;
     LCDC__enLayer_Copy(&sLayer,psLayerDest,sDimLayer);
 
-    free(pu16LayerSourceInitial);
+    free(pu16LayerStackInitial);
     free(pu16LayerDestInitial);
+    free(pu16LayerSourceInitial);
     return IMAGPROC_enOK;
 
 }

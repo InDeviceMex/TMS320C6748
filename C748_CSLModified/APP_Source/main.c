@@ -197,7 +197,7 @@ uint8_t u8State[2]={1,1};
 OV5640_LIGHTMODE_nValue enLight=OV5640_LIGHTMODE_enAUTO;
 OV5640_SPECIALEFFECTS_nValue enEffects=OV5640_SPECIALEFFECTS_enNORMAL;
 LCDC_DIMENSIONS_TypeDef Dim,DimImage,DimProcessing,DimProcessing1,DimProcessing2;
-
+LCDC_AREA_TypeDef sArea[100];
 int main(void)
  {
 
@@ -601,6 +601,7 @@ int main(void)
 
         IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
         IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
+        IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,sArea);
         IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
         IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
         IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);

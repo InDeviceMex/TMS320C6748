@@ -93,5 +93,6 @@ IMAGPROC_nStatus IMAGEPROC__en16bGrayWorldSquare(LCDC_TFT_TypeDef *psLayerSource
 IMAGPROC_nStatus IMAGEPROC__en16bMaxRGB(LCDC_TFT_TypeDef *psLayerSource,LCDC_DIMENSIONS_TypeDef sDim, float* fRGB,uint32_t u32Norm);
 IMAGPROC_nStatus IMAGEPROC__en16bMeanNormRGB(LCDC_TFT_TypeDef *psLayerSource,LCDC_DIMENSIONS_TypeDef sDim, float* fRGB,uint32_t u32Norm);
 
+IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea);
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */
