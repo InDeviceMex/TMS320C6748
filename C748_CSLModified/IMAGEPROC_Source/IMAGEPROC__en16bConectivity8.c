@@ -110,7 +110,7 @@ void vLabelComponent8(CONECTIVITY8_TypeDef sConectivity,LCDC_AREA_TypeDef* sArea
 
 #define OPT (1)
 #define OPT1 (16) //4,8,10,12
-IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea)
+int32_t IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea, uint32_t* pu32MaxArea)
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
@@ -131,8 +131,11 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
     uint16_t u16DimWidth=sDim.width;
     uint16_t u16DimHeight=sDim.height;
     uint16_t u16Value=0;
+    uint32_t u32Value=0;
 
     int32_t s32Index;
+    uint32_t u32Index;
+    uint32_t u32Sub;
 
     LCDC_AREA_TypeDef*volatile psActualArea=&sArea[0];
     int32_t s32LabelNo = 0;
@@ -140,16 +143,16 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
 
     uint8_t u8Mod=0;
     if((psLayerSource->variableType != VARIABLETYPE_enUSHORT) || (psLayerDest->variableType != VARIABLETYPE_enUSHORT))
-          return IMAGPROC_enERROR;
+          return -1;
     if(u16DimX0>u32LayerSourceWidthTotal)
-      return IMAGPROC_enERROR;
+      return -1;
     if(u16DimX1>u32LayerDestWidthTotal)
-      return IMAGPROC_enERROR;
+      return -1;
 
     if(u16DimY0>u32LayerSourceHeightTotal)
-      return IMAGPROC_enERROR;
+      return -1;
     if(u16DimY1>u32LayerDestHeightTotal)
-      return IMAGPROC_enERROR;
+      return -1;
 
     if((u16DimWidth+ u16DimX0)>u32LayerSourceWidthTotal)
       u16DimWidth= u32LayerSourceWidthTotal- u16DimX0;
@@ -175,6 +178,7 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
 
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource,u16DimWidth*u16DimHeight*2);
+    Cache__vWbInvL2 ((uint32_t)pu16LayerDest,u16DimWidth*u16DimHeight*2);
     sLayer.layerWidthTotal=u16DimWidth;
     sLayer.layerHeightTotal=u16DimHeight;
     sDimLayer.width=u16DimWidth;
@@ -190,7 +194,6 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
 
 
     sLayer.layerDataAddress=(uint32_t)pu16LayerDest;
-    Cache__vWbInvL2 ((uint32_t)pu16LayerDest,u16DimWidth*u16DimHeight*2);
     LCDC__vLayer_Clear(&sLayer,0);
 
     _nassert ((int)(pu16LayerStack) % 8 == 0);
@@ -239,6 +242,18 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
       *((uint16_t*)pu16LayerDest)=u16Value*0x1061 +u16Value*7500;
       pu16LayerDest++;
     }
+    u32Sub=((uint32_t)psActualArea-(uint32_t)sArea)/sizeof(LCDC_AREA_TypeDef);
+    *pu32MaxArea=0;
+
+    psActualArea=sArea;
+    for(u32Index=0;u32Index<u32Sub;u32Index++)
+    {
+        u32Value=psActualArea->area;
+        psActualArea++;
+        if(u32Value>*pu32MaxArea)
+            *pu32MaxArea=u32Value;
+    }
+
     Cache__vWbL2 ((uint32_t)pu16LayerDestInitial, u16DimHeight*u16DimWidth*2);
 
     sLayer.variableType=VARIABLETYPE_enUSHORT;
@@ -252,6 +267,6 @@ IMAGPROC_nStatus IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LC
     free(pu16LayerStackInitial);
     free(pu16LayerDestInitial);
     free(pu16LayerSourceInitial);
-    return IMAGPROC_enOK;
+    return u32Sub;
 
 }
