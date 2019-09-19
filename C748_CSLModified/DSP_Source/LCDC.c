@@ -1513,16 +1513,22 @@ __inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LC
     uint32_t u32DataAddress=psLayer->layerDataAddress;
     uint32_t u32WidthTotal=psLayer->layerWidthTotal;
 
+    uint8_t u8MultSource=1;
    // GPIO8_SET_DATA_R=GPIO_R_P12_MASK;
     if((sDim.height+ sDim.YInit)>psLayer->layerHeightTotal)
         return;
     if((sDim.width+ sDim.XInit)>psLayer->layerWidthTotal)
         return;
 
+    if(psLayer->variableType == VARIABLETYPE_enUSHORT )
+    {
+        u8MultSource=2;
+    }
+
     Cache__vWbInvL2((uint32_t)&u16Color,4);
 
 
-    u32DataAddress+=((sDim.YInit*u32WidthTotal + sDim.XInit)*2);
+    u32DataAddress+=((sDim.YInit*u32WidthTotal + sDim.XInit)*u8MultSource);
 /*
     EDMA3_0_CC0_PaRAM->PaRAM[126].OPT=0;
     EDMA3_0_CC0_PaRAM->PaRAM[126].OPT_Bit.TCC=31;
@@ -1554,10 +1560,10 @@ __inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LC
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.LINK=((uint32_t)(EDMA3_0_CC0_PaRAM->PaRAM)+126*8*4)&0xFFFF;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC=(uint32_t)&u16Color;
     EDMA3_0_CC0_PaRAM->PaRAM[127].DST=(uint32_t)u32DataAddress;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=2;//
+    EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=u8MultSource;//
     EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.BCNT=sDim.width;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_CIDX=0;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.DSTBIDX=2;
+    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.DSTBIDX=u8MultSource;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.SRCBIDX=0;//-psLayer->layerWidthTotal;
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.BCNTRLD=0;
     EDMA3_0_CC0_INTERRUPT->ICR|=0x80000000;

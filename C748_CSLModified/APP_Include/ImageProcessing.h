@@ -94,5 +94,10 @@ IMAGPROC_nStatus IMAGEPROC__en16bMaxRGB(LCDC_TFT_TypeDef *psLayerSource,LCDC_DIM
 IMAGPROC_nStatus IMAGEPROC__en16bMeanNormRGB(LCDC_TFT_TypeDef *psLayerSource,LCDC_DIMENSIONS_TypeDef sDim, float* fRGB,uint32_t u32Norm);
 
 int32_t IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea, uint32_t* pu32MaxArea);
+int32_t IMAGEPROC__en16bConectivity4(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea, uint32_t* pu32MaxArea);
+
+
+IMAGPROC_nStatus IMAGEPROC_en16bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,uint32_t u32Hist[256]);
+
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */

@@ -385,7 +385,7 @@ int main(void)
     MAIN_sSubLayerBG_Generic[11].layerString="[Image Cam]";
     MAIN_sSubLayerBG_Generic[11].layerBGXInit=(130-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     MAIN_sSubLayerBG_Generic[11].layerBGYInit=132;
-    MAIN_sSubLayerBG_Generic[11].layerWidth=11;
+    MAIN_sSubLayerBG_Generic[11].layerWidth=15;
     MAIN_sSubLayerBG_Generic[11].layerHeight=1;
     MAIN_sLayerBG_Number[11]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[11]);
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
@@ -393,19 +393,19 @@ int main(void)
 
 
     MAIN_sSubLayerBG_Generic[11].layerString="[White Patch]";
-    MAIN_sSubLayerBG_Generic[11].layerBGXInit=130+((130)-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[11].layerBGXInit=125+((130)-(13*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
     MAIN_sSubLayerBG_Generic[11].layerString="[GrayWorld]";
-    MAIN_sSubLayerBG_Generic[11].layerBGXInit=130*2+((130)-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[11].layerBGXInit=125*2+((130)-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWorld Max]";
-    MAIN_sSubLayerBG_Generic[11].layerBGXInit=130*3+((130)-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWld Max]";
+    MAIN_sSubLayerBG_Generic[11].layerBGXInit=125*3+((130)-(13*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWorld Square]";
-    MAIN_sSubLayerBG_Generic[11].layerBGXInit=130*4+((130)-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
+    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWld Sqr]";
+    MAIN_sSubLayerBG_Generic[11].layerBGXInit=125*4+((130)-(13*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
 
