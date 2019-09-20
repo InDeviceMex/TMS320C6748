@@ -97,7 +97,7 @@ int32_t IMAGEPROC__en16bConectivity8(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Ty
 int32_t IMAGEPROC__en16bConectivity4(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim, LCDC_AREA_TypeDef* sArea, uint32_t* pu32MaxArea);
 
 
-IMAGPROC_nStatus IMAGEPROC_en16bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,uint32_t u32Hist[256]);
+IMAGPROC_nStatus IMAGEPROC_en8bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,uint32_t* restrict u32Hist, uint8_t u8Bins);
 
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */

@@ -74,6 +74,7 @@ volatile uint16_t MAIN__u16CameraBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 #pragma DATA_SECTION(MAIN__fProcessingBuffer13, ".MyBuffer")
 #pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 8)
 
+uint32_t MAIN__u32Hist[256];
 volatile uint16_t MAIN__u16ProcessingBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer1[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer2[CAMERA_HEIGHT][CAMERA_WIDTH];
@@ -84,7 +85,7 @@ volatile uint16_t MAIN__u16ProcessingBuffer6[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer7[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer8[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer9[CAMERA_HEIGHT][CAMERA_WIDTH];
-volatile uint8_t MAIN__u8ProcessingBuffer8[120][76];
+volatile uint8_t MAIN__u8ProcessingBuffer8[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer9[120][76];
 volatile uint8_t MAIN__u8ProcessingBuffer10[120][76];
 volatile float MAIN__fProcessingBuffer11[CAMERA_HEIGHT][CAMERA_WIDTH];
@@ -561,6 +562,19 @@ int main(void)
     MAIN_sSubLayerBG_Generic[21].variableType=VARIABLETYPE_enUSHORT;
     MAIN_sLayerBG_Number[21]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[21]);
 
+    MAIN_sSubLayerBG_Generic[22].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[22].layerDataAddress=(uint32_t)&MAIN__u8ProcessingBuffer8;
+    MAIN_sSubLayerBG_Generic[22].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[22].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[22].layerBGXInit=120+5+5+120+5+120+5+120+5;
+    MAIN_sSubLayerBG_Generic[22].layerBGYInit=150;
+    MAIN_sSubLayerBG_Generic[22].layerWidthTotal=CAMERA_WIDTH;
+    MAIN_sSubLayerBG_Generic[22].layerHeightTotal=CAMERA_HEIGHT;
+    MAIN_sSubLayerBG_Generic[22].layerWidth=CAMERA_WIDTH;
+    MAIN_sSubLayerBG_Generic[22].layerHeight=CAMERA_HEIGHT;
+    MAIN_sSubLayerBG_Generic[22].variableType=VARIABLETYPE_enUCHAR;
+    MAIN_sLayerBG_Number[22]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[22]);
+
 
 
     DimProcessing.X[0]=0;
@@ -592,7 +606,8 @@ int main(void)
     {
         IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
         IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[12],DimProcessing,0x7204,0xE,0x14,0xb);
-
+        IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
+        IMAGEPROC_en8bHistogram(&MAIN_sSubLayerBG_Generic[22],DimProcessing,MAIN__u32Hist,255);
 
         DimProcessing1.Y[0]=0;
         DimProcessing1.Y[1]=0;
