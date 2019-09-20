@@ -9,7 +9,7 @@
 
 
 #define OPT (18)
-IMAGPROC_nStatus IMAGEPROC_en8bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,uint32_t* restrict u32Hist, uint8_t u8Bins)
+IMAGPROC_nStatus IMAGEPROC__en8bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,uint32_t* restrict u32Hist, uint8_t u8Bins)
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;

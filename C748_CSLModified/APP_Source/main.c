@@ -74,6 +74,7 @@ volatile uint16_t MAIN__u16CameraBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 #pragma DATA_SECTION(MAIN__fProcessingBuffer13, ".MyBuffer")
 #pragma DATA_ALIGN(MAIN__fProcessingBuffer13, 8)
 
+float MAIN__fHist[256];
 uint32_t MAIN__u32Hist[256];
 volatile uint16_t MAIN__u16ProcessingBuffer[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer1[CAMERA_HEIGHT][CAMERA_WIDTH];
@@ -86,7 +87,7 @@ volatile uint16_t MAIN__u16ProcessingBuffer7[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer8[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint16_t MAIN__u16ProcessingBuffer9[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer8[CAMERA_HEIGHT][CAMERA_WIDTH];
-volatile uint8_t MAIN__u8ProcessingBuffer9[120][76];
+volatile uint8_t MAIN__u8ProcessingBuffer9[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile uint8_t MAIN__u8ProcessingBuffer10[120][76];
 volatile float MAIN__fProcessingBuffer11[CAMERA_HEIGHT][CAMERA_WIDTH];
 volatile float MAIN__fProcessingBuffer12[CAMERA_HEIGHT][CAMERA_WIDTH];
@@ -575,6 +576,20 @@ int main(void)
     MAIN_sSubLayerBG_Generic[22].variableType=VARIABLETYPE_enUCHAR;
     MAIN_sLayerBG_Number[22]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[22]);
 
+    MAIN_sSubLayerBG_Generic[23].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
+    MAIN_sSubLayerBG_Generic[23].layerDataAddress=(uint32_t)&MAIN__u8ProcessingBuffer9;
+    MAIN_sSubLayerBG_Generic[23].layerXInit=0;
+    MAIN_sSubLayerBG_Generic[23].layerYInit=0;
+    MAIN_sSubLayerBG_Generic[23].layerBGXInit=120+5+5+120+5+120+5+120+5;
+    MAIN_sSubLayerBG_Generic[23].layerBGYInit=150;
+    MAIN_sSubLayerBG_Generic[23].layerWidthTotal=CAMERA_WIDTH;
+    MAIN_sSubLayerBG_Generic[23].layerHeightTotal=CAMERA_HEIGHT;
+    MAIN_sSubLayerBG_Generic[23].layerWidth=CAMERA_WIDTH;
+    MAIN_sSubLayerBG_Generic[23].layerHeight=CAMERA_HEIGHT;
+    MAIN_sSubLayerBG_Generic[23].variableType=VARIABLETYPE_enUCHAR;
+    MAIN_sLayerBG_Number[23]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[23]);
+
+
 
 
     DimProcessing.X[0]=0;
@@ -601,108 +616,108 @@ int main(void)
     DimProcessing2.height=176;
 
     LCDC__vBackLight(BACKLIGHT_enON);
+    DimProcessing1.Y[0]=0;
+    DimProcessing1.Y[1]=0;
+    DimProcessing1.width=CAMERA_WIDTH;
+    DimProcessing1.height=40;
 
+    IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[21],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing1,0x7204,0xE,0x14,0xb);
+
+    DimProcessing1.Y[0]=40;
+    DimProcessing1.Y[1]=40;
+    DimProcessing1.width=CAMERA_WIDTH;
+    DimProcessing1.height=39;
+
+    IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[21],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing1,0x7204,0xE,0x14,0xb);
+
+    DimProcessing1.Y[0]=80;
+    DimProcessing1.Y[1]=80;
+    DimProcessing1.width=CAMERA_WIDTH;
+    DimProcessing1.height=39;
+
+    IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing1,0x7204,0xE,0x14,0xb);
+    IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[21],DimProcessing1);
+    IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing1,0x7204,0xE,0x14,0xb);
+
+    valuesDMA[1]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing,sArea,&valuesDMA[0]);
+    valuesDMA[0]/=2;
+    for(u8State[0]=0;u8State[0]<valuesDMA[1];u8State[0]++)
+    {
+        if(sArea[u8State[0]].area>valuesDMA[0])
+        {
+            Dim.XInit=sArea[u8State[0]].Xmin;
+            Dim.YInit=sArea[u8State[0]].Ymin;
+            Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
+            Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
+            LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[18],Dim,0xf800);
+        }
+    }
+    valuesDMA[3]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing,sArea,&valuesDMA[2]);
+    valuesDMA[2]/=2;
+    for(u8State[0]=0;u8State[0]<valuesDMA[3];u8State[0]++)
+    {
+        if(sArea[u8State[0]].area>valuesDMA[2])
+        {
+            Dim.XInit=sArea[u8State[0]].Xmin;
+            Dim.YInit=sArea[u8State[0]].Ymin;
+            Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
+            Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
+            LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[19],Dim,0xf800);
+        }
+    }
+    valuesDMA[5]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing,sArea,&valuesDMA[4]);
+    valuesDMA[4]/=2;
+    for(u8State[0]=0;u8State[0]<valuesDMA[5];u8State[0]++)
+    {
+        if(sArea[u8State[0]].area>valuesDMA[4])
+        {
+            Dim.XInit=sArea[u8State[0]].Xmin;
+            Dim.YInit=sArea[u8State[0]].Ymin;
+            Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
+            Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
+            LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[20],Dim,0xf800);
+        }
+    }
+    valuesDMA[7]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing,sArea,&valuesDMA[6]);
+    valuesDMA[6]/=2;
+    for(u8State[0]=0;u8State[0]<valuesDMA[7];u8State[0]++)
+    {
+        if(sArea[u8State[0]].area>valuesDMA[6])
+        {
+            Dim.XInit=sArea[u8State[0]].Xmin;
+            Dim.YInit=sArea[u8State[0]].Ymin;
+            Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
+            Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
+            LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[21],Dim,0xf800);
+        }
+    }
     while(1)
     {
-        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[12],DimProcessing,0x7204,0xE,0x14,0xb);
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
-        IMAGEPROC_en8bHistogram(&MAIN_sSubLayerBG_Generic[22],DimProcessing,MAIN__u32Hist,255);
+        IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[22],DimProcessing,MAIN__fHist,255);
+        IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
 
-        DimProcessing1.Y[0]=0;
-        DimProcessing1.Y[1]=0;
-        DimProcessing1.width=CAMERA_WIDTH;
-        DimProcessing1.height=40;
 
-        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[21],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing1,0x7204,0xE,0x14,0xb);
-
-        DimProcessing1.Y[0]=40;
-        DimProcessing1.Y[1]=40;
-        DimProcessing1.width=CAMERA_WIDTH;
-        DimProcessing1.height=39;
-
-        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[21],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing1,0x7204,0xE,0x14,0xb);
-
-        DimProcessing1.Y[0]=80;
-        DimProcessing1.Y[1]=80;
-        DimProcessing1.width=CAMERA_WIDTH;
-        DimProcessing1.height=39;
-
-        IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[18],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[19],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorldMax(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[20],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing1,0x7204,0xE,0x14,0xb);
-        IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[16],&MAIN_sSubLayerBG_Generic[21],DimProcessing1);
-        IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing1,0x7204,0xE,0x14,0xb);
-
-        valuesDMA[1]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[18],&MAIN_sSubLayerBG_Generic[18],DimProcessing,sArea,&valuesDMA[0]);
-        valuesDMA[0]/=2;
-        for(u8State[0]=0;u8State[0]<valuesDMA[1];u8State[0]++)
-        {
-            if(sArea[u8State[0]].area>valuesDMA[0])
-            {
-                Dim.XInit=sArea[u8State[0]].Xmin;
-                Dim.YInit=sArea[u8State[0]].Ymin;
-                Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
-                Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
-                LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[18],Dim,0xf800);
-            }
-        }
-        valuesDMA[3]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[19],&MAIN_sSubLayerBG_Generic[19],DimProcessing,sArea,&valuesDMA[2]);
-        valuesDMA[2]/=2;
-        for(u8State[0]=0;u8State[0]<valuesDMA[3];u8State[0]++)
-        {
-            if(sArea[u8State[0]].area>valuesDMA[2])
-            {
-                Dim.XInit=sArea[u8State[0]].Xmin;
-                Dim.YInit=sArea[u8State[0]].Ymin;
-                Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
-                Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
-                LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[19],Dim,0xf800);
-            }
-        }
-        valuesDMA[5]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[20],DimProcessing,sArea,&valuesDMA[4]);
-        valuesDMA[4]/=2;
-        for(u8State[0]=0;u8State[0]<valuesDMA[5];u8State[0]++)
-        {
-            if(sArea[u8State[0]].area>valuesDMA[4])
-            {
-                Dim.XInit=sArea[u8State[0]].Xmin;
-                Dim.YInit=sArea[u8State[0]].Ymin;
-                Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
-                Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
-                LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[20],Dim,0xf800);
-            }
-        }
-        valuesDMA[7]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[21],&MAIN_sSubLayerBG_Generic[21],DimProcessing,sArea,&valuesDMA[6]);
-        valuesDMA[6]/=2;
-        for(u8State[0]=0;u8State[0]<valuesDMA[7];u8State[0]++)
-        {
-            if(sArea[u8State[0]].area>valuesDMA[6])
-            {
-                Dim.XInit=sArea[u8State[0]].Xmin;
-                Dim.YInit=sArea[u8State[0]].Ymin;
-                Dim.width=sArea[u8State[0]].Xmax-sArea[u8State[0]].Xmin;
-                Dim.height=sArea[u8State[0]].Ymax-sArea[u8State[0]].Ymin;
-                LCDC__vLayer_Print_Rectangle(&MAIN_sSubLayerBG_Generic[21],Dim,0xf800);
-            }
-        }
 
         IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[13],DimProcessing);
         IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
