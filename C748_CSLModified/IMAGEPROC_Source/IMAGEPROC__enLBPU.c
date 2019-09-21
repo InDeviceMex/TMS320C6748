@@ -7,6 +7,14 @@
 
 #include <ImageProcessing.h>
 
+uint8_t LBPU_u8Decision(uint8_t LBPU[58][9],uint8_t pu8SubImage[9]);
+void LBPU_vComparative(uint8_t pu8SubImage[9], uint8_t  u8Pixel[9]);
+void LBPU_vFillPixelArray(uint8_t u8Pixel[9],uint8_t*restrict pu8LayerSource, uint16_t u16DimWidth );
+
+
+
+#pragma DATA_SECTION(LBPU, ".MyBuffer")
+#pragma DATA_ALIGN(LBPU, 8)//2^15
 uint8_t LBPU[58][9]=
 {
 {0,0,0,0,0,0,0,0,0},
@@ -75,7 +83,7 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
-    int32_t s32Index=0, s32Sub=0;
+    int32_t s32Index=0;
 
     uint16_t u16DimX0=sDim.X[0];
     uint16_t u16DimX1=sDim.X[1];
@@ -93,21 +101,10 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
 
 
     uint8_t u8LBPUValue=0;
-    uint8_t u8LBPUCounter=0;
-    uint8_t pu8SubImage[9];
 
-    uint8_t u8PixelCenter=0;
-    uint8_t u8Pixel0=0;
-    uint8_t u8Pixel1=0;
-    uint8_t u8Pixel2=0;
-    uint8_t u8Pixel3=0;
-    uint8_t u8Pixel5=0;
-    uint8_t u8Pixel6=0;
-    uint8_t u8Pixel7=0;
-    uint8_t u8Pixel8=0;
     int16_t s16Count=0;
 
-
+    uint8_t u8Pixel[9];
     uint8_t u8Mod=0;
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR) || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
           return IMAGPROC_enERROR;
@@ -139,6 +136,9 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     u8Mod=(u16DimWidth*u16DimHeight)%OPT;
     if(u8Mod)
       u8Mod=OPT-u8Mod;
+
+    //uint8_t* restrict u8Pixel =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*16);
+    uint8_t* restrict pu8SubImage =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*16);
     uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
 
@@ -160,6 +160,8 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     LCDC__enLayer_Copy(psLayerSource,&sLayer,sDimLayer);
 
 
+    _nassert ((int)(u8Pixel) % 8 == 0);
+    _nassert ((int)(pu8SubImage) % 8 == 0);
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
     pu8LayerSource+=u16DimWidth;
@@ -172,76 +174,10 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
         {
             if(s16Count<(u16DimWidth-1))
             {
-                u8PixelCenter= *((uint8_t*)pu8LayerSource);
-                u8Pixel0= *((uint8_t*)pu8LayerSource-1-u16DimWidth);
-                u8Pixel1= *((uint8_t*)pu8LayerSource-u16DimWidth); //top
-                u8Pixel2= *((uint8_t*)pu8LayerSource+1-u16DimWidth);
-                u8Pixel3= *((uint8_t*)pu8LayerSource-1); //left
-                u8Pixel5= *((uint8_t*)pu8LayerSource+1); //right
-                u8Pixel6= *((uint8_t*)pu8LayerSource-1+u16DimWidth);
-                u8Pixel7= *((uint8_t*)pu8LayerSource+u16DimWidth); //bottom
-                u8Pixel8= *((uint8_t*)pu8LayerSource+1+u16DimWidth);
-                pu8SubImage[4]=0;
-                if(u8PixelCenter>=u8Pixel0)
-                    pu8SubImage[0]=1;
-                else
-                    pu8SubImage[0]=0;
+                LBPU_vFillPixelArray(u8Pixel,(uint8_t*)pu8LayerSource,u16DimWidth);
+                LBPU_vComparative(pu8SubImage,u8Pixel);
+                u8LBPUValue= LBPU_u8Decision(LBPU,pu8SubImage);
 
-                if(u8PixelCenter>=u8Pixel1)
-                    pu8SubImage[1]=1;
-                else
-                    pu8SubImage[1]=0;
-
-                if(u8PixelCenter>=u8Pixel2)
-                    pu8SubImage[2]=1;
-                else
-                    pu8SubImage[2]=0;
-
-                if(u8PixelCenter>=u8Pixel3)
-                    pu8SubImage[3]=1;
-                else
-                    pu8SubImage[3]=0;
-
-                if(u8PixelCenter>=u8Pixel5)
-                    pu8SubImage[5]=1;
-                else
-                    pu8SubImage[5]=0;
-
-                if(u8PixelCenter>=u8Pixel6)
-                    pu8SubImage[6]=1;
-                else
-                    pu8SubImage[6]=0;
-
-                if(u8PixelCenter>=u8Pixel7)
-                    pu8SubImage[7]=1;
-                else
-                    pu8SubImage[7]=0;
-
-                if(u8PixelCenter>=u8Pixel8)
-                    pu8SubImage[8]=1;
-                else
-                    pu8SubImage[8]=0;
-
-
-
-                u8LBPUValue=58;
-                #pragma UNROLL(58)
-                #pragma MUST_ITERATE (58,58,58)
-                for(s32Sub=0;s32Sub<58;s32Sub++)
-                {
-                    u8LBPUCounter=0;
-                    if(LBPU[s32Sub][0]==pu8SubImage[0]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][1]==pu8SubImage[1]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][2]==pu8SubImage[2]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][3]==pu8SubImage[3]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][4]==pu8SubImage[4]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][5]==pu8SubImage[5]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][6]==pu8SubImage[6]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][7]==pu8SubImage[7]) u8LBPUCounter++;
-                    if(LBPU[s32Sub][8]==pu8SubImage[8]) u8LBPUCounter++;
-                    if(u8LBPUCounter==9) u8LBPUValue=s32Sub;
-
-                }
                 *((uint8_t*)pu8LayerDest)= u8LBPUValue<<2;
             }
             else
@@ -252,8 +188,10 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
         }
         else
         {
+
             *((uint8_t*)pu8LayerDest)=0;
         }
+
         s16Count++;
         pu8LayerDest++;
         pu8LayerSource++;
@@ -274,6 +212,7 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     sLayer.layerDataAddress=(uint32_t)pu8LayerDest;
     LCDC__vLayer_Clear(&sLayer,0);
 
+
     sLayer.layerWidthTotal=u16DimWidth;
     sLayer.layerHeightTotal=u16DimHeight;
     sDimLayer.width=u16DimWidth;
@@ -288,5 +227,73 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
 
     free(pu8LayerDestInitial);
     free(pu8LayerSourceInitial);
+    free(pu8SubImage);
+    //free(u8Pixel);
     return IMAGPROC_enOK;
+}
+
+void LBPU_vFillPixelArray(uint8_t u8Pixel[9],uint8_t* restrict pu8LayerSource, uint16_t u16DimWidth )
+{
+    u8Pixel[0]= *((uint8_t*)pu8LayerSource-1-u16DimWidth);
+    u8Pixel[1]= *((uint8_t*)pu8LayerSource-u16DimWidth); //top
+    u8Pixel[2]= *((uint8_t*)pu8LayerSource+1-u16DimWidth);
+    u8Pixel[3]= *((uint8_t*)pu8LayerSource-1); //left
+    u8Pixel[4]= *((uint8_t*)pu8LayerSource);
+    u8Pixel[5]= *((uint8_t*)pu8LayerSource+1); //right
+    u8Pixel[6]= *((uint8_t*)pu8LayerSource-1+u16DimWidth);
+    u8Pixel[7]= *((uint8_t*)pu8LayerSource+u16DimWidth); //bottom
+    u8Pixel[8]= *((uint8_t*)pu8LayerSource+1+u16DimWidth);
+}
+
+void LBPU_vComparative(uint8_t pu8SubImage[9], uint8_t u8Pixel[9])
+{
+    uint8_t u8PixelCenter =u8Pixel[4];
+    int32_t s32Index=0;
+
+   // _nassert ((int)(u8Pixel) % 8 == 0);
+    _nassert ((int)(pu8SubImage) % 8 == 0);
+    #pragma UNROLL(3)
+    #pragma MUST_ITERATE (3,9,3)
+    for (s32Index=0; s32Index<9; s32Index++)
+    {
+        if(u8PixelCenter>=u8Pixel[s32Index])
+            pu8SubImage[s32Index]=1;
+        else
+            pu8SubImage[s32Index]=0;
+    }
+    pu8SubImage[4]=0;
+
+}
+
+uint8_t LBPU_u8Decision(uint8_t LBPU[58][9],uint8_t pu8SubImage[9])
+{
+    uint32_t s32Sub=0;
+    uint8_t u8LBPUValue=58;
+    uint8_t u8LBPUCounter=0;
+
+    _nassert ((int)(pu8SubImage) % 8 == 0);
+    _nassert ((int)(LBPU) % 8 == 0);
+    #pragma UNROLL(1)
+    #pragma MUST_ITERATE (1,58,1)
+    for(s32Sub=0;s32Sub<58;s32Sub++)
+    {
+        u8LBPUCounter=0;
+        if(LBPU[s32Sub][0]==pu8SubImage[0]) u8LBPUCounter|=1;
+        if(LBPU[s32Sub][1]==pu8SubImage[1]) u8LBPUCounter++;
+        if(LBPU[s32Sub][2]==pu8SubImage[2]) u8LBPUCounter|=4;
+        if(LBPU[s32Sub][3]==pu8SubImage[3]) u8LBPUCounter++;
+        if(LBPU[s32Sub][4]==pu8SubImage[4]) u8LBPUCounter|=8;
+        if(LBPU[s32Sub][5]==pu8SubImage[5]) u8LBPUCounter++;
+        if(LBPU[s32Sub][6]==pu8SubImage[6]) u8LBPUCounter|=0x20;
+        if(LBPU[s32Sub][7]==pu8SubImage[7]) u8LBPUCounter++;
+        if(LBPU[s32Sub][8]==pu8SubImage[8]) u8LBPUCounter|=0x40;
+        if(u8LBPUCounter==113)
+        {
+            u8LBPUValue=s32Sub;
+            break;
+        }
+
+    }
+    return u8LBPUValue;
+
 }
