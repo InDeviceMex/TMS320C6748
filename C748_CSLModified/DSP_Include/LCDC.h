@@ -1336,7 +1336,7 @@ Lcdc_nStatus LCDC__enLayerBG_RefreshSubLayersArray(uint8_t u32SubLayerInit, uint
 __inline void LCDC__vLayer_Clear(LCDC_TFT_TypeDef* restrict   psLayer, uint16_t u16Color);
 __inline void LCDC__vLayerBG_Clear(uint16_t u16Color);
 
-__inline void LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict   psLayer,LCDC_DIMENSIONS_TypeDef sDim,uint16_t u16Color);
+__inline void LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict   psLayer,LCDC_DIMENSIONS_TypeDef sDim,uint32_t u32Color);
 __inline void LCDC__vLayerBG_ClearSection  (LCDC_DIMENSIONS_TypeDef sDim,uint16_t u16Color);
 
 Lcdc_nStatus LCDC__enLayer_Copy (LCDC_TFT_TypeDef* restrict   layerSource,LCDC_TFT_TypeDef* restrict   layerDest,LCDC_DIMENSIONS_TypeDef dim);

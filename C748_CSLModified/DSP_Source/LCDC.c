@@ -1507,7 +1507,7 @@ Lcdc_nStatus LCDC__enLayerBG_RefreshSubLayersArray(uint8_t u8SubLayerInit, uint8
 #define LCDC_TIMEOUTQDMA (120000000)
 
 #pragma FUNC_ALWAYS_INLINE( LCDC__vLayer_ClearSection)
-__inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LCDC_DIMENSIONS_TypeDef sDim,uint16_t  u16Color)
+__inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LCDC_DIMENSIONS_TypeDef sDim,uint32_t  u32Color)
 {
     uint32_t u32TimeOut=LCDC_TIMEOUTQDMA;
     uint32_t u32DataAddress=psLayer->layerDataAddress;
@@ -1524,8 +1524,11 @@ __inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LC
     {
         u8MultSource=2;
     }
-
-    Cache__vWbInvL2((uint32_t)&u16Color,4);
+    if(psLayer->variableType == VARIABLETYPE_enFLOAT )
+    {
+        u8MultSource=2;
+    }
+    Cache__vWbInvL2((uint32_t)&u32Color,u8MultSource);
 
 
     u32DataAddress+=((sDim.YInit*u32WidthTotal + sDim.XInit)*u8MultSource);
@@ -1558,7 +1561,7 @@ __inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LC
     EDMA3_0_CC0_PaRAM->PaRAM[127].OPT_Bit.SYNCDIM =1;
 
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.LINK=((uint32_t)(EDMA3_0_CC0_PaRAM->PaRAM)+126*8*4)&0xFFFF;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC=(uint32_t)&u16Color;
+    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC=(uint32_t)&u32Color;
     EDMA3_0_CC0_PaRAM->PaRAM[127].DST=(uint32_t)u32DataAddress;
     EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=u8MultSource;//
     EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.BCNT=sDim.width;
@@ -1584,11 +1587,11 @@ __inline void  LCDC__vLayer_ClearSection  (LCDC_TFT_TypeDef* restrict psLayer,LC
 
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.LINK=0xFFFF;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC=(uint32_t)u32DataAddress;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].DST=(uint32_t)u32DataAddress+(u32WidthTotal*2);
-    EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=sDim.width*2;//
+    EDMA3_0_CC0_PaRAM->PaRAM[127].DST=(uint32_t)u32DataAddress+(u32WidthTotal*u8MultSource);
+    EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.ACNT=sDim.width*u8MultSource;//
     EDMA3_0_CC0_PaRAM->PaRAM[127].A_B_CNT_Bit.BCNT=sDim.height-1;
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_CIDX=0;
-    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.DSTBIDX=(u32WidthTotal*2);
+    EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.DSTBIDX=(u32WidthTotal*u8MultSource);
     EDMA3_0_CC0_PaRAM->PaRAM[127].SRC_DST_BIDX_Bit.SRCBIDX=0;//-psLayer->layerWidthTotal;
     EDMA3_0_CC0_PaRAM->PaRAM[127].LINK_BCNTRLD_Bit.BCNTRLD=0;
     EDMA3_0_CC0_PaRAM->PaRAM[127].CCNT=1;
