@@ -538,7 +538,7 @@ int main(void)
     MAIN_sLayerBG_Number[19]=LCDC__u8Layer_AddSubLayer(MAIN_psLayerBG,&MAIN_sSubLayerBG_Generic[19]);
 
     MAIN_sSubLayerBG_Generic[20].layerType=LAYER_TYPE_enIMAGE_NOHEADER;
-    MAIN_sSubLayerBG_Generic[20].layerDataAddress=(uint32_t)&MAIN__u16ProcessingBuffer8;
+    MAIN_sSubLayerBG_Generic[20].layerDataAddress=(uint32_t)&gImage_cabeza120x120;
     MAIN_sSubLayerBG_Generic[20].layerXInit=0;
     MAIN_sSubLayerBG_Generic[20].layerYInit=0;
     MAIN_sSubLayerBG_Generic[20].layerBGXInit=120+5+5+120+5+120+5;
@@ -605,6 +605,16 @@ int main(void)
     DimProcessing1.Y[1]=0;
     DimProcessing1.width=CAMERA_WIDTH;
     DimProcessing1.height=CAMERA_HEIGHT;
+
+
+
+    IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
+
+    IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+    IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[21],DimProcessing);
+
+
+
 
     DimProcessing2.X[0]=0;
     DimProcessing2.X[1]=0;
@@ -673,6 +683,10 @@ int main(void)
         }
     }
 
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[18]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[19]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[20]);
+    LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[21]);
     while(1)
     {
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
@@ -710,8 +724,6 @@ int main(void)
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[13]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[16]);
-        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[18]);
-        LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[19]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[0]);
         LCDC__enLayerBG_RefreshSubLayer(1);
 

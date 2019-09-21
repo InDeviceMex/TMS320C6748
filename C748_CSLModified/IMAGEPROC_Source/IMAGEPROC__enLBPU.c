@@ -7,15 +7,15 @@
 
 #include <ImageProcessing.h>
 
-uint8_t LBPU_u8Decision(uint8_t LBPU[58][9],uint8_t pu8SubImage[9]);
-void LBPU_vComparative(uint8_t pu8SubImage[9], uint8_t  u8Pixel[9]);
-void LBPU_vFillPixelArray(uint8_t u8Pixel[9],uint8_t*restrict pu8LayerSource, uint16_t u16DimWidth );
+uint8_t LBPU_u8Decision(uint8_t LBPU[58][8],uint8_t pu8SubImage[8]);
+void LBPU_vComparative(uint8_t pu8SubImage[8], uint8_t  u8Pixel[9]);
+__inline void LBPU_vFillPixelArray(uint8_t u8Pixel[9],uint8_t*restrict pu8LayerSource, uint16_t u16DimWidth );
 
 
 
 #pragma DATA_SECTION(LBPU, ".MyBuffer")
 #pragma DATA_ALIGN(LBPU, 8)//2^15
-uint8_t LBPU[58][9]=
+/*uint8_t LBPU[58][9]=
 {
 {0,0,0,0,0,0,0,0,0},
 {1,1,1,1,0,1,1,1,1},
@@ -76,7 +76,70 @@ uint8_t LBPU[58][9]=
 {0,0,0,0,0,0,0,1,0},
 {0,0,0,0,0,0,1,0,0},
 };
+*/
 
+uint8_t LBPU[58][8]=
+{
+
+{0,0,0,0 , 0,0,0,0},
+{0,0,0,1 , 0,0,0,0},
+{1,0,0,0 , 0,0,0,0},
+{0,1,0,0 , 0,0,0,0},
+{0,0,1,0 , 0,0,0,0},
+{0,0,0,0 , 1,0,0,0},
+{0,0,0,0 , 0,0,0,1},
+{0,0,0,0 , 0,0,1,0},
+{0,0,0,0 , 0,1,0,0},
+{1,0,0,1 , 0,0,0,0},
+{1,1,0,0 , 0,0,0,0},
+{0,1,1,0 , 0,0,0,0},
+{0,0,1,0 , 1,0,0,0},
+{0,0,0,0 , 1,0,0,1},
+{0,0,0,0 , 0,0,1,1},
+{0,0,0,0 , 0,1,1,0},
+{0,0,0,1 , 0,1,0,0},
+{1,1,0,1 , 0,0,0,0},
+{1,1,1,0 , 0,0,0,0},
+{0,1,1,0 , 1,0,0,0},
+{0,0,1,0 , 1,0,0,1},
+{0,0,0,0 , 1,0,1,1},
+{0,0,0,0 , 0,1,1,1},
+{0,0,0,1 , 0,1,1,0},
+{1,0,0,1 , 0,1,0,0},
+{1,1,1,1 , 0,0,0,0},
+{1,1,1,0 , 1,0,0,0},
+{0,1,1,0 , 1,0,0,1},
+{0,0,1,0 , 1,0,1,1},
+{0,0,0,0 , 1,1,1,1},
+{0,0,0,1 , 0,1,1,1},
+{1,0,0,1 , 0,1,1,0},
+{1,1,0,1 , 0,1,0,0},
+{1,1,1,1 , 1,0,0,0},
+{1,1,1,0 , 1,0,0,1},
+{0,1,1,0 , 1,0,1,1},
+{0,0,1,0 , 1,1,1,1},
+{0,0,0,1 , 1,1,1,1},
+{1,0,0,1 , 0,1,1,1},
+{1,1,0,1 , 0,1,1,0},
+{1,1,1,1 , 0,1,0,0},
+{1,1,1,1 , 1,0,0,1},
+{1,1,1,0 , 1,0,1,1},
+{0,1,1,0 , 1,1,1,1},
+{0,0,1,1 , 1,1,1,1},
+{1,0,0,1 , 1,1,1,1},
+{1,1,0,1 , 0,1,1,1},
+{1,1,1,1 , 0,1,1,0},
+{1,1,1,1 , 1,1,0,0},
+{1,1,1,1 , 1,0,1,1},
+{1,1,1,0 , 1,1,1,1},
+{0,1,1,1 , 1,1,1,1},
+{1,0,1,1 , 1,1,1,1},
+{1,1,0,1 , 1,1,1,1},
+{1,1,1,1 , 0,1,1,1},
+{1,1,1,1 , 1,1,1,0},
+{1,1,1,1 , 1,1,0,1},
+{1,1,1,1 , 1,1,1,1},
+};
 
 #define OPT (4)
 IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim)
@@ -104,7 +167,6 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
 
     int16_t s16Count=0;
 
-    uint8_t u8Pixel[9];
     uint8_t u8Mod=0;
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR) || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
           return IMAGPROC_enERROR;
@@ -137,10 +199,10 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     if(u8Mod)
       u8Mod=OPT-u8Mod;
 
-    //uint8_t* restrict u8Pixel =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*16);
     uint8_t* restrict pu8SubImage =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*16);
     uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
+    uint8_t* u8Pixel =(uint8_t *) memalign(8,sizeof(uint8_t)*16);
 
     uint8_t* pu8LayerSourceInitial =pu8LayerSource;
     uint8_t* pu8LayerDestInitial =pu8LayerDest;
@@ -228,44 +290,45 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     free(pu8LayerDestInitial);
     free(pu8LayerSourceInitial);
     free(pu8SubImage);
-    //free(u8Pixel);
+    free(u8Pixel);
     return IMAGPROC_enOK;
 }
 
-void LBPU_vFillPixelArray(uint8_t u8Pixel[9],uint8_t* restrict pu8LayerSource, uint16_t u16DimWidth )
+__inline void LBPU_vFillPixelArray(uint8_t u8Pixel[9],uint8_t* restrict pu8LayerSource, uint16_t u16DimWidth )
 {
     u8Pixel[0]= *((uint8_t*)pu8LayerSource-1-u16DimWidth);
     u8Pixel[1]= *((uint8_t*)pu8LayerSource-u16DimWidth); //top
     u8Pixel[2]= *((uint8_t*)pu8LayerSource+1-u16DimWidth);
     u8Pixel[3]= *((uint8_t*)pu8LayerSource-1); //left
-    u8Pixel[4]= *((uint8_t*)pu8LayerSource);
-    u8Pixel[5]= *((uint8_t*)pu8LayerSource+1); //right
-    u8Pixel[6]= *((uint8_t*)pu8LayerSource-1+u16DimWidth);
-    u8Pixel[7]= *((uint8_t*)pu8LayerSource+u16DimWidth); //bottom
-    u8Pixel[8]= *((uint8_t*)pu8LayerSource+1+u16DimWidth);
+    u8Pixel[4]= *((uint8_t*)pu8LayerSource+1); //right
+    u8Pixel[5]= *((uint8_t*)pu8LayerSource-1+u16DimWidth);
+    u8Pixel[6]= *((uint8_t*)pu8LayerSource+u16DimWidth); //bottom
+    u8Pixel[7]= *((uint8_t*)pu8LayerSource+1+u16DimWidth);
+
+
+    u8Pixel[8]= *((uint8_t*)pu8LayerSource);
 }
 
-void LBPU_vComparative(uint8_t pu8SubImage[9], uint8_t u8Pixel[9])
+void LBPU_vComparative(uint8_t pu8SubImage[8], uint8_t u8Pixel[9])
 {
-    uint8_t u8PixelCenter =u8Pixel[4];
+    uint8_t u8PixelCenter =u8Pixel[8];
     int32_t s32Index=0;
 
-   // _nassert ((int)(u8Pixel) % 8 == 0);
+    _nassert ((int)(u8Pixel) % 8 == 0);
     _nassert ((int)(pu8SubImage) % 8 == 0);
-    #pragma UNROLL(3)
-    #pragma MUST_ITERATE (3,9,3)
-    for (s32Index=0; s32Index<9; s32Index++)
+    #pragma UNROLL(2)
+    #pragma MUST_ITERATE (2,8,2)
+    for (s32Index=0; s32Index<8; s32Index++)
     {
         if(u8PixelCenter>=u8Pixel[s32Index])
             pu8SubImage[s32Index]=1;
         else
             pu8SubImage[s32Index]=0;
     }
-    pu8SubImage[4]=0;
 
 }
 
-uint8_t LBPU_u8Decision(uint8_t LBPU[58][9],uint8_t pu8SubImage[9])
+uint8_t LBPU_u8Decision(uint8_t LBPU[58][8],uint8_t pu8SubImage[8])
 {
     uint32_t s32Sub=0;
     uint8_t u8LBPUValue=58;
@@ -277,16 +340,15 @@ uint8_t LBPU_u8Decision(uint8_t LBPU[58][9],uint8_t pu8SubImage[9])
     #pragma MUST_ITERATE (1,58,1)
     for(s32Sub=0;s32Sub<58;s32Sub++)
     {
-        u8LBPUCounter=0;
+        u8LBPUCounter=8;
         if(LBPU[s32Sub][0]==pu8SubImage[0]) u8LBPUCounter|=1;
         if(LBPU[s32Sub][1]==pu8SubImage[1]) u8LBPUCounter++;
         if(LBPU[s32Sub][2]==pu8SubImage[2]) u8LBPUCounter|=4;
         if(LBPU[s32Sub][3]==pu8SubImage[3]) u8LBPUCounter++;
-        if(LBPU[s32Sub][4]==pu8SubImage[4]) u8LBPUCounter|=8;
-        if(LBPU[s32Sub][5]==pu8SubImage[5]) u8LBPUCounter++;
-        if(LBPU[s32Sub][6]==pu8SubImage[6]) u8LBPUCounter|=0x20;
-        if(LBPU[s32Sub][7]==pu8SubImage[7]) u8LBPUCounter++;
-        if(LBPU[s32Sub][8]==pu8SubImage[8]) u8LBPUCounter|=0x40;
+        if(LBPU[s32Sub][4]==pu8SubImage[4]) u8LBPUCounter++;
+        if(LBPU[s32Sub][5]==pu8SubImage[5]) u8LBPUCounter|=0x20;
+        if(LBPU[s32Sub][6]==pu8SubImage[6]) u8LBPUCounter++;
+        if(LBPU[s32Sub][7]==pu8SubImage[7]) u8LBPUCounter|=0x40;
         if(u8LBPUCounter==113)
         {
             u8LBPUValue=s32Sub;
