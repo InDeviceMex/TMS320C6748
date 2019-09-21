@@ -611,7 +611,7 @@ int main(void)
     IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[20],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
 
     IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
-    IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,58);
+    IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
 
     IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[21],DimProcessing);
 
@@ -699,7 +699,7 @@ int main(void)
         fCountOld=SysTick__fGetTimeUs();
         GPIO0_SET_DATA_R=GPIO_R_P13_MASK;
         IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
-        IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,58);
+        IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
         GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
         fCountNew=SysTick__fGetTimeUs();

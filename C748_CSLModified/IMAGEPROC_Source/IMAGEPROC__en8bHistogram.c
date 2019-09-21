@@ -93,7 +93,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_
 
         u8Aux=*((uint8_t*)pu8LayerSource);
         pu8LayerSource++;
-        u32Hist[u8Aux]++;
+        if(u8Aux<=u8Bins)
+            u32Hist[u8Aux]++;
     }
     u32Hist[0]-=u8Mod;
 
