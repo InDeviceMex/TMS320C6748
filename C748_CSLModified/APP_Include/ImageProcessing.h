@@ -9,8 +9,8 @@
 #define APP_INCLUDE_IMAGEPROCESSING_H_
 
 
-#include "core.h"
-#include "cache.h"
+#include "Core.h"
+#include "Cache.h"
 #include <LCDC.h>
 #define PI (3.14159265358979323846)
 

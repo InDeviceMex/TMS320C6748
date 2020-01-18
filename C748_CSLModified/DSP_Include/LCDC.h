@@ -11,7 +11,7 @@
 #include "Core.h"
 #include "Font.h"
 #include "SYSCFG.h"
-#include "CACHE.h"
+#include "Cache.h"
 #include "EDMA3.h"
 #include "DDR2.h"
 #include "SysTick.h"
@@ -1057,8 +1057,8 @@ struct LCDC_TFT_TypeDef
     //uint32_t layerColorMode;      //modo del color RGB565, RGB888, ARGB8888
     uint16_t layerColorBG;
     uint16_t layerColorFont; //color para el BG color de la layer
-    FONT_TypeDef* layerFont; //tamaño de la fuente de la layer
-    char* layerString; //tamaño de la fuente de la layer
+    FONT_TypeDef* layerFont; //tamaï¿½o de la fuente de la layer
+    char* layerString; //tamaï¿½o de la fuente de la layer
 
     uint16_t layerWidthTotal;  //ancho de la layer
     uint16_t layerHeightTotal; //altura de la layer

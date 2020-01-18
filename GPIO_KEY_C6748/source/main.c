@@ -3,7 +3,7 @@
 /**
  * main.c
  */
-//#include <C6x.h>
+//#include <c6x.h>
 #include <Cache.h>
 #include <IDMA.h>
 #include <BM.h>

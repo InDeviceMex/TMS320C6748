@@ -7,7 +7,7 @@
 
 
 
-#include "images.h"
+#include "Images.h"
 
 const uint8_t gImage_manos240x240[28800] = { /* 0X00,0X10,0X78,0X00,0X78,0X00,0X01,0X1B, */
 0X76,0XB5,0X76,0XBD,0X76,0XBD,0X56,0XBD,0X55,0XBD,0X55,0XBD,0X55,0XBD,0X55,0XBD,

@@ -8,13 +8,13 @@
 #ifndef INCLUDE_CORE_H_
 #define INCLUDE_CORE_H_
 
-#include <ti\mathlib\mathlib.h>
+#include <ti/mathlib/mathlib.h>
 #include <math.h>
 #include <mathl.h>
 #include <mathf.h>
-#include <ti\dsplib\dsplib.h>
-#include <ti\imglib\imglib.h>
-#include <C6x.h>
+#include <ti/dsplib/dsplib.h>
+#include <ti/imglib/imglib.h>
+#include <c6x.h>
 #include <stdlib.h>
 
  //   _enable_interrupts();

@@ -112,7 +112,7 @@ LCDC_TFT_TypeDef MAIN_sLayerBG={
         0xF800, 0x001F, //colores BG y Font
         &FONT_s16x24, MAIN_cStringBG, //font utilizada y memoria para strings
 
-        640,480,640,480,  //tamaño del layer
+        640,480,640,480,  //tamaï¿½o del layer
 
         2,2,2,2,
         0,(uint16_t*)MAIN_u16LayerBG_BGX,   //posicion de inicio layerBGXi

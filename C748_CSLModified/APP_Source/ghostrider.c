@@ -6,7 +6,7 @@
  */
 
 
-#include "images.h"
+#include "Images.h"
 
 
 const uint16_t ghostRaider259x194[259*194] ={
