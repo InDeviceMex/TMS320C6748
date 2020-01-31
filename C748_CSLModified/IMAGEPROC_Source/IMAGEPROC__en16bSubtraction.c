@@ -91,6 +91,14 @@ IMAGPROC_nStatus IMAGEPROC__en16bSubtraction(LCDC_TFT_TypeDef* psLayerSource1,LC
     uint16_t* pu16LayerSource2Initial =pu16LayerSource2;
     uint16_t* pu16LayerDestInitial =pu16LayerDest;
 
+    if((pu16LayerSource1Initial == 0) || (pu16LayerSource2Initial==0) || (pu16LayerDestInitial==0))
+    {
+        free(pu16LayerDestInitial);
+        free(pu16LayerSource2Initial);
+        free(pu16LayerSource1Initial);
+        return IMAGPROC_enALLOCERROR;
+    }
+
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource1,u16DimWidth*u16DimHeight*2);
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource2,u16DimWidth*u16DimHeight*2);
 

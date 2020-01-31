@@ -83,6 +83,15 @@ IMAGPROC_nStatus IMAGEPROC__en8bSubtraction(LCDC_TFT_TypeDef* psLayerSource1,LCD
     uint8_t* restrict pu8LayerSource1Initial =pu8LayerSource1;
     uint8_t* restrict pu8LayerSource2Initial =pu8LayerSource2;
     uint8_t* pu8LayerDestInitial =pu8LayerDest;
+
+    if((pu8LayerSource1Initial == 0) || (pu8LayerSource2Initial == 0) || (pu8LayerDestInitial==0))
+    {
+        free(pu8LayerDestInitial);
+        free(pu8LayerSource2Initial);
+        free(pu8LayerSource1Initial);
+        return IMAGPROC_enALLOCERROR;
+    }
+
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource1,u16DimWidth*u16DimHeight);
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource2,u16DimWidth*u16DimHeight);
 

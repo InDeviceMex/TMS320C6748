@@ -159,10 +159,18 @@ int32_t IMAGEPROC__en16bConectivity4(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Ty
     uint16_t* restrict pu16LayerSource = (uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint16_t* restrict pu16LayerDest   = (uint16_t *) memalign(1024*1024,sizeof(uint16_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint16_t* restrict pu16LayerStack  = (uint16_t *) memalign(1024*1024,5*sizeof(uint16_t)*(u16DimWidth*u16DimHeight + 1));
+
     uint16_t* pu16LayerSourceInitial = pu16LayerSource;
     uint16_t* pu16LayerDestInitial   = pu16LayerDest;
     uint16_t* pu16LayerStackInitial  = pu16LayerStack;
 
+    if((pu16LayerSourceInitial == 0) ||(pu16LayerDestInitial == 0) || (pu16LayerStackInitial==0))
+    {
+        free(pu16LayerStackInitial);
+        free(pu16LayerDestInitial);
+        free(pu16LayerSourceInitial);
+        return IMAGPROC_enALLOCERROR;
+    }
 
     Cache__vWbInvL2 ((uint32_t)pu16LayerSource,u16DimWidth*u16DimHeight*2);
     Cache__vWbInvL2 ((uint32_t)pu16LayerDest,u16DimWidth*u16DimHeight*2);

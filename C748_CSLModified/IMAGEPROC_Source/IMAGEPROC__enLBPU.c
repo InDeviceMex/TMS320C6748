@@ -290,13 +290,22 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     u8Mod=(u16DimWidth*u16DimHeight)%OPT;
     if(u8Mod)
       u8Mod=OPT-u8Mod;
-    uint8_t* restrict pu8SubImage =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*16);
+    uint8_t* restrict pu8SubImage =(uint8_t *) memalign(64,sizeof(uint8_t)*16);
      uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict u8Pixel =(uint8_t *) memalign(8,sizeof(uint8_t)*16);
 
     uint8_t* pu8LayerSourceInitial =pu8LayerSource;
     uint8_t* pu8LayerDestInitial =pu8LayerDest;
+
+    if((pu8SubImage == 0) || (pu8LayerSourceInitial == 0) || (pu8LayerDestInitial == 0) || (u8Pixel==0))
+    {
+        free(pu8LayerDestInitial);
+        free(pu8LayerSourceInitial);
+        free(u8Pixel);
+        free(pu8SubImage);
+        return IMAGPROC_enALLOCERROR;
+    }
 
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight);
     Cache__vWbInvL2 ((uint32_t)pu8LayerDest,u16DimWidth*u16DimHeight);
@@ -366,8 +375,8 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
 
     free(pu8LayerDestInitial);
     free(pu8LayerSourceInitial);
-     free(u8Pixel);
-     free(pu8SubImage);
+    free(u8Pixel);
+    free(pu8SubImage);
     return IMAGPROC_enOK;
 }
 

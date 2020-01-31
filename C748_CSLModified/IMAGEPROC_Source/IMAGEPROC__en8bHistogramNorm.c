@@ -52,8 +52,17 @@ IMAGPROC_nStatus IMAGEPROC__en8bHistogramNorm(LCDC_TFT_TypeDef *psLayerSource, L
 
     uint8_t* restrict pu8LayerSource = (uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+32);
     uint32_t* restrict pu32Hist = (uint32_t *) memalign(1024*1024,sizeof(uint32_t)*(u8Bins+1));
+
     uint8_t* pu8LayerSourceInitial = pu8LayerSource;
     uint32_t* pu32HistInitial = pu32Hist;
+
+    if((pu8LayerSourceInitial == 0) || (pu32HistInitial==0))
+    {
+        free(pu32HistInitial);
+        free(pu8LayerSourceInitial);
+        return IMAGPROC_enALLOCERROR;
+    }
+
     uint8_t* pu8LayerSourceFirst = ((uint8_t*)pu8LayerSource+(u16DimWidth*u16DimHeight));
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight);
     Cache__vWbInvL2 ((uint32_t)pu32Hist,(u8Bins+1)*4);

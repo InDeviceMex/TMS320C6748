@@ -19,6 +19,7 @@ typedef enum
 {
     IMAGPROC_enOK = 0,
     IMAGPROC_enERROR = 1,
+    IMAGPROC_enALLOCERROR =2,
 }IMAGPROC_nStatus;
 typedef enum
 {

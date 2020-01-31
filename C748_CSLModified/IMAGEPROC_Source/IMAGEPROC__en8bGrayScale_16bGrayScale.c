@@ -65,6 +65,13 @@ IMAGPROC_nStatus IMAGEPROC__en8bGrayScale_16bGrayScale(LCDC_TFT_TypeDef *psLayer
     uint8_t* pu8LayerSourceInitial =pu8LayerSource;
     uint16_t* pu16LayerDestInitial =pu16LayerDest;
 
+    if((pu8LayerSourceInitial == 0) || (pu16LayerDestInitial==0))
+    {
+        free(pu16LayerDestInitial);
+        free(pu8LayerSourceInitial);
+        return IMAGPROC_enALLOCERROR;
+    }
+
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight);
 
     sLayer.layerWidthTotal=u16DimWidth;

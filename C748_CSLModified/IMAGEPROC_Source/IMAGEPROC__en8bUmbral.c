@@ -75,6 +75,13 @@ IMAGPROC_nStatus IMAGEPROC__en8bUmbral(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_
     uint8_t* pu8LayerSourceInitial =pu8LayerSource;
     uint8_t* pu8LayerDestInitial =pu8LayerDest;
 
+    if((pu8LayerSourceInitial == 0) || (pu8LayerDestInitial==0))
+    {
+        free(pu8LayerDestInitial);
+        free(pu8LayerSourceInitial);
+        return IMAGPROC_enALLOCERROR;
+    }
+
 
     Cache__vWbInvL2 ((uint32_t)pu8LayerSource,u16DimWidth*u16DimHeight);
     sLayer.layerWidthTotal=u16DimWidth;
