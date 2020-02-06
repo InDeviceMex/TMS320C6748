@@ -238,7 +238,6 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
-    int32_t s32Index=0;
 
     uint16_t u16DimX0=sDim.X[0];
     uint16_t u16DimX1=sDim.X[1];
@@ -254,10 +253,11 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     uint16_t u16DimWidth=sDim.width;
     uint16_t u16DimHeight=sDim.height;
 
+    uint16_t u16Width=0;
+    uint16_t u16Height=0;
+
 
     uint8_t u8LBPUValue=0;
-
-    int16_t s16Count=0;
 
     uint8_t u8Mod=0;
     if((psLayerSource->variableType != VARIABLETYPE_enUCHAR) || (psLayerDest->variableType != VARIABLETYPE_enUCHAR))
@@ -329,31 +329,27 @@ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Type
     _nassert ((int)(pu8SubImage) % 8 == 0);
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
-    pu8LayerSource+=u16DimWidth;
+    pu8LayerSource+=u16DimWidth+1;
+    pu8LayerDest+=u16DimWidth+1;
 
     #pragma UNROLL(1)
     #pragma MUST_ITERATE (1,,1)
-    for(s32Index=0;s32Index<(u16DimHeight*u16DimWidth)-(u16DimWidth<<1);s32Index++)
+    for(u16Height=0;u16Height<(u16DimHeight-2);u16Height++)
     {
-        if(s16Count>0)
+        for(u16Width=0;u16Width<(u16DimWidth-2);u16Width++)
         {
-            if(s16Count<(u16DimWidth-1))
-            {
-                LBPU_vFillPixelArray(u8Pixel,(uint8_t*)pu8LayerSource,u16DimWidth);
-                LBPU_vComparative(pu8SubImage,u8Pixel);
-                u8LBPUValue= LBPU_u8Decision(LBPU,pu8SubImage);
+            LBPU_vFillPixelArray(u8Pixel,(uint8_t*)pu8LayerSource,u16DimWidth);
+            LBPU_vComparative(pu8SubImage,u8Pixel);
+            u8LBPUValue= LBPU_u8Decision(LBPU,pu8SubImage);
 
-                *((uint8_t*)pu8LayerDest)= u8LBPUValue<<2;
-            }
-            else
-            {
-                s16Count=-1;
-            }
+            *((uint8_t*)pu8LayerDest)= u8LBPUValue<<2;
+
+            pu8LayerDest++;
+            pu8LayerSource++;
+
         }
-        s16Count++;
-        pu8LayerDest++;
-        pu8LayerSource++;
-
+        pu8LayerSource+=2;
+        pu8LayerDest+=2;
     }
 
 
