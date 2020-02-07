@@ -104,6 +104,9 @@ uint16_t MAIN_u16LayerBG_BGX[2]={0};
 uint16_t MAIN_u16LayerBG_BGY[2]={0};
 uint16_t MAIN_u16layerBG_X[2]={0};
 uint16_t MAIN_u16layerBG_Y[2]={0};
+int8_t  MAIN_KernelGauss[9]={2,4,2,4,8,4,2,4,2};
+int8_t  MAIN_KernelPA[9]={0,-1,0,-1,5,-1,0,-1,0};
+int8_t  MAIN_KernelEdge[9]={-1,-1,-1,-1,8,-1,-1,-1,-1};
 LCDC_TFT_TypeDef* MAIN_psLayerBG_SubLayers[MAIN_SUBLAYERMAX];
 
 LCDC_TFT_TypeDef MAIN_sLayerBG={
@@ -395,19 +398,19 @@ int main(void)
     LCDC__enLayerBG_RefreshSubLayer(1);
 
 
-    MAIN_sSubLayerBG_Generic[11].layerString="[White Patch]";
+    MAIN_sSubLayerBG_Generic[11].layerString="[Edge Detect]";
     MAIN_sSubLayerBG_Generic[11].layerBGXInit=125+((130)-(13*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWorld]";
+    MAIN_sSubLayerBG_Generic[11].layerString="[GaussFilt]";
     MAIN_sSubLayerBG_Generic[11].layerBGXInit=125*2+((130)-(11*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWld Max]";
+    MAIN_sSubLayerBG_Generic[11].layerString="[HighPassFil]";
     MAIN_sSubLayerBG_Generic[11].layerBGXInit=125*3+((130)-(13*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
-    MAIN_sSubLayerBG_Generic[11].layerString="[GrayWld Sqr]";
+    MAIN_sSubLayerBG_Generic[11].layerString="[LBPU transf]";
     MAIN_sSubLayerBG_Generic[11].layerBGXInit=125*4+((130)-(13*MAIN_sSubLayerBG_Generic[11].layerFont->width))/2;
     LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[11]);
     LCDC__enLayerBG_RefreshSubLayer(1);
@@ -706,47 +709,53 @@ int main(void)
 
         IMAGEPROC__en16bWhitePatch(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
         IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
-        //IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
 
 
-
-        DimProcessing.X[0]=50;
-        DimProcessing.X[1]=0;
-        DimProcessing.Y[0]=10;
-        DimProcessing.Y[1]=0;
-        DimProcessing.width=30;
-        DimProcessing.height=40;
 
         IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
-        IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
+        //IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
+        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
+
+        IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelGauss,DimProcessing);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[13],DimProcessing);
 
-        DimProcessing.X[0]=0;
-        DimProcessing.X[1]=0;
-        DimProcessing.Y[0]=0;
-        DimProcessing.Y[1]=0;
-        DimProcessing.width=CAMERA_WIDTH;
-        DimProcessing.height=CAMERA_HEIGHT;
-
-
-        IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
-        IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
-        //IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
-
-        IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
-        IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
+        IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelPA,DimProcessing);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[14],DimProcessing);
-
-
-
-
-        IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
-        IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
         //IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
 
-        IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
-        IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
-        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
+
+        IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelEdge,DimProcessing);
+        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
+
+
+        //IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+        //IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
+
+//
+//        DimProcessing.X[0]=0;
+//        DimProcessing.X[1]=0;
+//        DimProcessing.Y[0]=0;
+//        DimProcessing.Y[1]=0;
+//        DimProcessing.width=CAMERA_WIDTH;
+//        DimProcessing.height=CAMERA_HEIGHT;
+//
+//
+//        IMAGEPROC__en16bGrayWorld(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
+//        IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
+//        IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[22],MAIN_KernelPA,DimProcessing);
+        //IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
+
+        //IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+        //IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
+//        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[14],DimProcessing);
+
+
+
+
+        //IMAGEPROC__en16bGrayWorldSquare(&MAIN_sSubLayerBG_Generic[0],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
+        //IMAGEPROC__en16bRGBScale_8bGrayScale(&MAIN_sSubLayerBG_Generic[12],&MAIN_sSubLayerBG_Generic[22],DimProcessing);
+        //IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
+
 
 
 
@@ -763,6 +772,17 @@ int main(void)
         //valuesDMA[9]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,sArea,&valuesDMA[8]);
         //valuesDMA[11]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[14],&MAIN_sSubLayerBG_Generic[14],DimProcessing,sArea,&valuesDMA[10]);
         //valuesDMA[13]=IMAGEPROC__en16bConectivity8(&MAIN_sSubLayerBG_Generic[15],&MAIN_sSubLayerBG_Generic[15],DimProcessing,sArea,&valuesDMA[12]);
+
+//        DimProcessing.X[0]=0;
+//        DimProcessing.X[1]=0;
+//        DimProcessing.Y[0]=60-25;
+//        DimProcessing.Y[1]=60-25;
+//        DimProcessing.width=120;
+//        DimProcessing.height=50;
+//
+//        LCDC__enLayer_Copy(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
+//
+
         GPIO0_CLR_DATA_R=GPIO_R_P13_MASK;
         fCountNew=SysTick__fGetTimeUs();
 
@@ -774,6 +794,8 @@ int main(void)
             LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[17]);
             SysTick__vRestart();
         }
+
+
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[12]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[13]);
         LCDC__enLayer_RefreshSubLayer(MAIN_psLayerBG,MAIN_sLayerBG_Number[14]);

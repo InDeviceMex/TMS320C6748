@@ -8,45 +8,45 @@
 #include <ImageProcessing.h>
 
 
-IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim)
+IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef * psLayerSource,LCDC_TFT_TypeDef * psLayerDest,LCDC_DIMENSIONS_TypeDef sDim)
 {
-    register uint16_t u16Width=0,u16Height=0;
-    register uint32_t u32HeightSource=0,u32HeightDest=0;
+    uint16_t u16Width=0,u16Height=0;
+    uint32_t u32HeightSource=0,u32HeightDest=0;
 
-    register uint32_t u32LayerHueDest;
-    register uint32_t u32LayerIntensityDest;
-    register uint32_t u32LayerSaturationDest;
-    register uint32_t u32LayerAddressSource;
+    uint32_t u32LayerHueDest;
+    uint32_t u32LayerIntensityDest;
+    uint32_t u32LayerSaturationDest;
+    uint32_t u32LayerAddressSource;
 
-    register int16_t s16Red = 0;
-    register int16_t s16Green = 0;
-    register int16_t s16Blue = 0;
+    int16_t s16Red = 0;
+    int16_t s16Green = 0;
+    int16_t s16Blue = 0;
 
-    register  uint16_t u16Aux = 0;
-    register int16_t s16Min = 0;
-    register int16_t s16Difference = 0;
-    register int32_t s32Sum = 0;
+     uint16_t u16Aux = 0;
+    int16_t s16Min = 0;
+    int16_t s16Difference = 0;
+    int32_t s32Sum = 0;
 
-    register float fAuxHue=0;
-    register float fAuxHuePartial1=0;
-    register float fAuxHuePartial2=0;
-    register float fAuxHuePartial3=0;
-    register  float fAuxIntensity=0;
-    register float fAuxSaturation=0;
-    register float fAuxSaturationPartial=0;
+    float fAuxHue=0;
+    float fAuxHuePartial1=0;
+    float fAuxHuePartial2=0;
+    float fAuxHuePartial3=0;
+    float fAuxIntensity=0;
+    float fAuxSaturation=0;
+    float fAuxSaturationPartial=0;
 
-    register uint16_t u16DimX0=sDim.X[0];
-    register uint16_t u16DimX1=sDim.X[1];
-    register uint16_t u16DimY0=sDim.Y[0];
-    register uint16_t u16DimY1=sDim.Y[1];
+    uint16_t u16DimX0=sDim.X[0];
+    uint16_t u16DimX1=sDim.X[1];
+    uint16_t u16DimY0=sDim.Y[0];
+    uint16_t u16DimY1=sDim.Y[1];
 
-    register uint32_t u32LayerSourceWidthTotal=psLayerSource->layerWidthTotal;
-    register uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
-    register uint32_t u32LayerSourceHeightTotal=psLayerSource->layerHeightTotal;
-    register uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
+    uint32_t u32LayerSourceWidthTotal=psLayerSource->layerWidthTotal;
+    uint32_t u32LayerDestWidthTotal=psLayerDest->layerWidthTotal;
+    uint32_t u32LayerSourceHeightTotal=psLayerSource->layerHeightTotal;
+    uint32_t u32LayerDestHeightTotal=psLayerDest->layerHeightTotal;
 
-    register uint16_t u16DimWidth=sDim.width;
-    register uint16_t u16DimHeight=sDim.height;
+    uint16_t u16DimWidth=sDim.width;
+    uint16_t u16DimHeight=sDim.height;
 
     if((psLayerSource->variableType != VARIABLETYPE_enUSHORT) || (psLayerDest->variableType != VARIABLETYPE_enFLOAT))
             return IMAGPROC_enERROR;

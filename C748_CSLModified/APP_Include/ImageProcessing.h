@@ -30,7 +30,7 @@ typedef enum
 
 }IMAGEPROC_nNormalize;
 
-IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__enGet16bRGBScaleHSI(LCDC_TFT_TypeDef * psLayerSource,LCDC_TFT_TypeDef * psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 IMAGPROC_nStatus IMAGEPROC__enGetHSI16bRGBScale(LCDC_TFT_TypeDef *restrict psLayerSource,LCDC_TFT_TypeDef *restrict psLayerDest,LCDC_DIMENSIONS_TypeDef sDim);
 
 IMAGPROC_nStatus IMAGEPROC__en16bRGBScale_16bGrayScale(LCDC_TFT_TypeDef *layerSource, LCDC_TFT_TypeDef *layerDest,LCDC_DIMENSIONS_TypeDef dim);
@@ -100,9 +100,11 @@ int32_t IMAGEPROC__en16bConectivity4(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_Ty
 
 IMAGPROC_nStatus IMAGEPROC__en8bHistogram(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,uint32_t* restrict u32Hist, uint8_t u8Bins);
 IMAGPROC_nStatus IMAGEPROC__en8bHistogramNorm(LCDC_TFT_TypeDef *psLayerSource, LCDC_DIMENSIONS_TypeDef sDim,float* restrict pfHist, uint8_t u8Bins);
-/*Todo incomplete*/ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
+/*Todo incomplete, must be considered use histograms*/ IMAGPROC_nStatus IMAGEPROC__enLBPU(LCDC_TFT_TypeDef *psLayerSource,LCDC_TFT_TypeDef *psLayerDest, LCDC_DIMENSIONS_TypeDef sDim);
 
 
+
+IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDest, int8_t ps8Kernel[9],LCDC_DIMENSIONS_TypeDef sDim);
 
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */
