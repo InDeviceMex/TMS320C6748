@@ -105,6 +105,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bHistogramNorm(LCDC_TFT_TypeDef *psLayerSource, L
 
 
 IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDest, int8_t ps8Kernel[9],LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en8bCorrelation5x5(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDest, int16_t ps16Kernel[25],LCDC_DIMENSIONS_TypeDef sDim);
+IMAGPROC_nStatus IMAGEPROC__en8bCorrelation7x7(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDest, int16_t ps16Kernel[25],LCDC_DIMENSIONS_TypeDef sDim);
 
 
 #endif /* APP_INCLUDE_IMAGEPROCESSING_H_ */

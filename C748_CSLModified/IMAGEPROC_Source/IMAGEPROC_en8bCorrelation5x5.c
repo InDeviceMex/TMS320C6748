@@ -1,20 +1,21 @@
 /*
- * IMAGEPROC_enCorrelation.c
+ * IMAGEPROC_en8bCorrelation5x5.c
  *
- *  Created on: 06/02/2020
+ *  Created on: 07/02/2020
  *      Author: vyldram
  */
 
 
+
 #include <ImageProcessing.h>
 
-#define KERNEL_LONG (9u)
+#define KERNEL_LONG (25u)
 
-__inline void CORRELATION_vCompute(uint8_t* restrict pu8SubImage, uint8_t  u8Pixel[KERNEL_LONG],int8_t  s8Kernel[KERNEL_LONG],uint16_t u16Div);
+__inline void CORRELATION_vCompute(uint8_t* restrict pu8SubImage, uint8_t  u8Pixel[KERNEL_LONG],int16_t  s16Kernel[KERNEL_LONG],uint16_t u16Div);
 __inline void CORRELATION_vFillPixelArray(uint8_t u8Pixel[KERNEL_LONG],uint8_t* restrict pu8LayerSource, uint16_t u16DimWidth );
 
 #define OPT (8)
-IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDest, int8_t ps8Kernel[KERNEL_LONG],LCDC_DIMENSIONS_TypeDef sDim)
+IMAGPROC_nStatus IMAGEPROC__en8bCorrelation5x5(LCDC_TFT_TypeDef *psLayerSource, LCDC_TFT_TypeDef*psLayerDest, int16_t ps16Kernel[KERNEL_LONG],LCDC_DIMENSIONS_TypeDef sDim)
 {
     LCDC_TFT_TypeDef sLayer;
     LCDC_DIMENSIONS_TypeDef sDimLayer;
@@ -80,7 +81,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, 
     uint8_t* restrict pu8SubImage =(uint8_t *) memalign(64,sizeof(uint8_t)*16);
     uint8_t* restrict pu8LayerSource =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
     uint8_t* restrict pu8LayerDest =(uint8_t *) memalign(1024*1024,sizeof(uint8_t)*u16DimWidth*u16DimHeight+u8Mod);
-    uint8_t* restrict u8Pixel =(uint8_t *) memalign(8,sizeof(uint8_t)*16);
+    uint8_t* restrict u8Pixel =(uint8_t *) memalign(16,sizeof(uint8_t)*32);
 
     uint8_t* pu8LayerSourceInitial =pu8LayerSource;
     uint8_t* pu8LayerDestInitial =pu8LayerDest;
@@ -115,7 +116,7 @@ IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, 
 
     for(u16Count=0; u16Count<KERNEL_LONG; u16Count++)
     {
-        s16Division+=ps8Kernel[u16Count];
+        s16Division+=ps16Kernel[u16Count];
     }
 
     if(s16Division==0)
@@ -128,17 +129,17 @@ IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, 
     _nassert ((int)(pu8LayerSource) % 8 == 0);
     _nassert ((int)(pu8LayerDest) % 8 == 0);
 
-    pu8LayerSource+=u16DimWidth+1;
-    pu8LayerDest+=u16DimWidth+1;
+    pu8LayerSource+=(2*u16DimWidth)+2;
+    pu8LayerDest+=(2*u16DimWidth)+2;
 
     #pragma UNROLL(1)
     #pragma MUST_ITERATE (1,,1)
-    for(u16Height=0;u16Height<(u16DimHeight-2);u16Height++)
+    for(u16Height=0;u16Height<(u16DimHeight-4);u16Height++)
     {
-        for(u16Width=0;u16Width<(u16DimWidth-2);u16Width++)
+        for(u16Width=0;u16Width<(u16DimWidth-4);u16Width++)
         {
             CORRELATION_vFillPixelArray(u8Pixel,(uint8_t*)pu8LayerSource,u16DimWidth);
-            CORRELATION_vCompute(pu8SubImage,u8Pixel,ps8Kernel,s16Division);
+            CORRELATION_vCompute(pu8SubImage,u8Pixel,ps16Kernel,s16Division);
 
             *((uint8_t*)pu8LayerDest)= *pu8SubImage;
 
@@ -146,8 +147,8 @@ IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, 
             pu8LayerSource++;
 
         }
-        pu8LayerSource+=2;
-        pu8LayerDest+=2;
+        pu8LayerSource+=4;
+        pu8LayerDest+=4;
     }
 
 
@@ -177,22 +178,40 @@ IMAGPROC_nStatus IMAGEPROC__en8bCorrelation3x3(LCDC_TFT_TypeDef *psLayerSource, 
 __inline void CORRELATION_vFillPixelArray(uint8_t u8Pixel[KERNEL_LONG],uint8_t* restrict pu8LayerSource, uint16_t u16DimWidth )
 {
 
-    u8Pixel[0]= *((uint8_t*)pu8LayerSource-1-u16DimWidth);
-    u8Pixel[1]= *((uint8_t*)pu8LayerSource-u16DimWidth); //top
-    u8Pixel[2]= *((uint8_t*)pu8LayerSource+1-u16DimWidth);
+    u8Pixel[0]= *((uint8_t*)pu8LayerSource-2-u16DimWidth-u16DimWidth);
+    u8Pixel[1]= *((uint8_t*)pu8LayerSource-1-u16DimWidth-u16DimWidth);
+    u8Pixel[2]= *((uint8_t*)pu8LayerSource-u16DimWidth-u16DimWidth);
+    u8Pixel[3]= *((uint8_t*)pu8LayerSource+1-u16DimWidth-u16DimWidth);
+    u8Pixel[4]= *((uint8_t*)pu8LayerSource+2-u16DimWidth-u16DimWidth);
 
-    u8Pixel[3]= *((uint8_t*)pu8LayerSource-1); //left
-    u8Pixel[4]= *((uint8_t*)pu8LayerSource);   //center
-    u8Pixel[5]= *((uint8_t*)pu8LayerSource+1); //right
+    u8Pixel[5]= *((uint8_t*)pu8LayerSource-2-u16DimWidth);
+    u8Pixel[6]= *((uint8_t*)pu8LayerSource-1-u16DimWidth);
+    u8Pixel[7]= *((uint8_t*)pu8LayerSource-u16DimWidth); //top
+    u8Pixel[8]= *((uint8_t*)pu8LayerSource+1-u16DimWidth);
+    u8Pixel[9]= *((uint8_t*)pu8LayerSource+2-u16DimWidth);
 
-    u8Pixel[6]= *((uint8_t*)pu8LayerSource-1+u16DimWidth);
-    u8Pixel[7]= *((uint8_t*)pu8LayerSource+u16DimWidth); //bottom
-    u8Pixel[8]= *((uint8_t*)pu8LayerSource+1+u16DimWidth);
+    u8Pixel[10]= *((uint8_t*)pu8LayerSource-2); //left
+    u8Pixel[11]= *((uint8_t*)pu8LayerSource-1); //left
+    u8Pixel[12]= *((uint8_t*)pu8LayerSource);   //center
+    u8Pixel[13]= *((uint8_t*)pu8LayerSource+1); //right
+    u8Pixel[14]= *((uint8_t*)pu8LayerSource+2); //right
+
+    u8Pixel[15]= *((uint8_t*)pu8LayerSource-2+u16DimWidth);
+    u8Pixel[16]= *((uint8_t*)pu8LayerSource-1+u16DimWidth);
+    u8Pixel[17]= *((uint8_t*)pu8LayerSource+u16DimWidth); //bottom
+    u8Pixel[18]= *((uint8_t*)pu8LayerSource+1+u16DimWidth);
+    u8Pixel[19]= *((uint8_t*)pu8LayerSource+2+u16DimWidth);
+
+    u8Pixel[20]= *((uint8_t*)pu8LayerSource-2+u16DimWidth+u16DimWidth);
+    u8Pixel[21]= *((uint8_t*)pu8LayerSource-1+u16DimWidth+u16DimWidth);
+    u8Pixel[22]= *((uint8_t*)pu8LayerSource+u16DimWidth+u16DimWidth); //bottom
+    u8Pixel[23]= *((uint8_t*)pu8LayerSource+1+u16DimWidth+u16DimWidth);
+    u8Pixel[24]= *((uint8_t*)pu8LayerSource+2+u16DimWidth+u16DimWidth);
 
 
 }
 
-__inline void CORRELATION_vCompute(uint8_t* restrict pu8SubImage, uint8_t  u8Pixel[KERNEL_LONG],int8_t  s8Kernel[KERNEL_LONG],uint16_t u16Div)
+__inline void CORRELATION_vCompute(uint8_t* restrict pu8SubImage, uint8_t  u8Pixel[KERNEL_LONG],int16_t  s16Kernel[KERNEL_LONG],uint16_t u16Div)
 {
     int32_t s32MaxValue =0;
 
@@ -200,15 +219,33 @@ __inline void CORRELATION_vCompute(uint8_t* restrict pu8SubImage, uint8_t  u8Pix
     _nassert ((int)(pu8SubImage) % 8 == 0);
     _nassert ((int)(u8Pixel) % 8 == 0);
 
-    s32MaxValue+=u8Pixel[0]*s8Kernel[0];
-    s32MaxValue+=u8Pixel[1]*s8Kernel[1];
-    s32MaxValue+=u8Pixel[2]*s8Kernel[2];
-    s32MaxValue+=u8Pixel[3]*s8Kernel[3];
-    s32MaxValue+=u8Pixel[4]*s8Kernel[4];
-    s32MaxValue+=u8Pixel[5]*s8Kernel[5];
-    s32MaxValue+=u8Pixel[6]*s8Kernel[6];
-    s32MaxValue+=u8Pixel[7]*s8Kernel[7];
-    s32MaxValue+=u8Pixel[8]*s8Kernel[8];
+    s32MaxValue+=u8Pixel[0]*s16Kernel[0];
+    s32MaxValue+=u8Pixel[1]*s16Kernel[1];
+    s32MaxValue+=u8Pixel[2]*s16Kernel[2];
+    s32MaxValue+=u8Pixel[3]*s16Kernel[3];
+    s32MaxValue+=u8Pixel[4]*s16Kernel[4];
+    s32MaxValue+=u8Pixel[5]*s16Kernel[5];
+    s32MaxValue+=u8Pixel[6]*s16Kernel[6];
+    s32MaxValue+=u8Pixel[7]*s16Kernel[7];
+    s32MaxValue+=u8Pixel[8]*s16Kernel[8];
+
+    s32MaxValue+=u8Pixel[9]*s16Kernel[9];
+    s32MaxValue+=u8Pixel[10]*s16Kernel[10];
+    s32MaxValue+=u8Pixel[11]*s16Kernel[11];
+    s32MaxValue+=u8Pixel[12]*s16Kernel[12];
+    s32MaxValue+=u8Pixel[13]*s16Kernel[13];
+    s32MaxValue+=u8Pixel[14]*s16Kernel[14];
+    s32MaxValue+=u8Pixel[15]*s16Kernel[15];
+    s32MaxValue+=u8Pixel[16]*s16Kernel[16];
+    s32MaxValue+=u8Pixel[17]*s16Kernel[17];
+
+    s32MaxValue+=u8Pixel[18]*s16Kernel[18];
+    s32MaxValue+=u8Pixel[19]*s16Kernel[19];
+    s32MaxValue+=u8Pixel[20]*s16Kernel[20];
+    s32MaxValue+=u8Pixel[21]*s16Kernel[21];
+    s32MaxValue+=u8Pixel[22]*s16Kernel[22];
+    s32MaxValue+=u8Pixel[23]*s16Kernel[23];
+    s32MaxValue+=u8Pixel[24]*s16Kernel[24];
 
     s32MaxValue/=u16Div;
     if(s32MaxValue<0)
@@ -219,5 +256,4 @@ __inline void CORRELATION_vCompute(uint8_t* restrict pu8SubImage, uint8_t  u8Pix
     *pu8SubImage=(uint8_t)s32MaxValue;
 
 }
-
 

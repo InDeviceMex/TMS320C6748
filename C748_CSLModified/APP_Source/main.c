@@ -105,6 +105,18 @@ uint16_t MAIN_u16LayerBG_BGY[2]={0};
 uint16_t MAIN_u16layerBG_X[2]={0};
 uint16_t MAIN_u16layerBG_Y[2]={0};
 int8_t  MAIN_KernelGauss[9]={2,4,2,4,8,4,2,4,2};
+int16_t  MAIN_KernelGauss5[25]={1,4,7,4,1,
+                              4,16,26,16,4,
+                              7,26,41,26,7,
+                              4,16,26,16,4,
+                              1,4,7,4,1};
+int16_t  MAIN_KernelGauss7[49]={0,0 ,1 ,2  ,1 ,0 ,0,
+                               0,3 ,13,22 ,13,3 ,0,
+                               1,13,59,97 ,53,13,1,
+                               2,22,97,159,97,22,2,
+                               1,13,59,97 ,53,13,1,
+                               0,3 ,13,22 ,13,3 ,0,
+                               0,0 ,1 ,2  ,1 ,0 ,0};
 int8_t  MAIN_KernelPA[9]={0,-1,0,-1,5,-1,0,-1,0};
 int8_t  MAIN_KernelEdge[9]={-1,-1,-1,-1,8,-1,-1,-1,-1};
 LCDC_TFT_TypeDef* MAIN_psLayerBG_SubLayers[MAIN_SUBLAYERMAX];
@@ -712,17 +724,23 @@ int main(void)
 
 
 
-        IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+        //IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
         //IMAGEPROC__en8bHistogramNorm(&MAIN_sSubLayerBG_Generic[23],DimProcessing,MAIN__fHist,255);
-        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
+        //IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
+
+        IMAGEPROC__en8bCorrelation5x5(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelGauss5,DimProcessing);
+        //IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[14],DimProcessing);
 
         IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelGauss,DimProcessing);
+        //IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[13],DimProcessing);
-
-        IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelPA,DimProcessing);
-        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[14],DimProcessing);
         //IMAGEPROC__en16bUmbral(&MAIN_sSubLayerBG_Generic[13],&MAIN_sSubLayerBG_Generic[13],DimProcessing,0x7204,0xE,0x14,0xb);
 
+
+        IMAGEPROC__en8bCorrelation7x7(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelGauss7,DimProcessing);
+        //IMAGEPROC__enLBPU(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[23],DimProcessing);
+        IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[15],DimProcessing);
 
         IMAGEPROC__en8bCorrelation3x3(&MAIN_sSubLayerBG_Generic[22],&MAIN_sSubLayerBG_Generic[23],MAIN_KernelEdge,DimProcessing);
         IMAGEPROC__en8bGrayScale_16bGrayScale(&MAIN_sSubLayerBG_Generic[23],&MAIN_sSubLayerBG_Generic[12],DimProcessing);
