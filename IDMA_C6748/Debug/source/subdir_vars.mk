@@ -2,6 +2,8 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
+SHELL = cmd.exe
+
 # Add inputs and outputs from these tool invocations to the build variables 
 ASM_SRCS += \
 ../source/intvecs.asm 
@@ -41,28 +43,28 @@ ASM_DEPS += \
 ./source/intvecs.d 
 
 OBJS__QUOTED += \
-"source/Cache.obj" \
-"source/DDR2.obj" \
-"source/IDMA.obj" \
-"source/INTC.obj" \
-"source/PLLC.obj" \
-"source/PSC.obj" \
-"source/SYSCFG.obj" \
-"source/intvecs.obj" \
-"source/main.obj" 
+"source\Cache.obj" \
+"source\DDR2.obj" \
+"source\IDMA.obj" \
+"source\INTC.obj" \
+"source\PLLC.obj" \
+"source\PSC.obj" \
+"source\SYSCFG.obj" \
+"source\intvecs.obj" \
+"source\main.obj" 
 
 C_DEPS__QUOTED += \
-"source/Cache.d" \
-"source/DDR2.d" \
-"source/IDMA.d" \
-"source/INTC.d" \
-"source/PLLC.d" \
-"source/PSC.d" \
-"source/SYSCFG.d" \
-"source/main.d" 
+"source\Cache.d" \
+"source\DDR2.d" \
+"source\IDMA.d" \
+"source\INTC.d" \
+"source\PLLC.d" \
+"source\PSC.d" \
+"source\SYSCFG.d" \
+"source\main.d" 
 
 ASM_DEPS__QUOTED += \
-"source/intvecs.d" 
+"source\intvecs.d" 
 
 C_SRCS__QUOTED += \
 "../source/Cache.c" \

@@ -2,7 +2,9 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-CG_TOOL_ROOT := /home/vyldram/ti/ccs930/ccs/tools/compiler/ti-cgt-c6000_8.3.5
+SHELL = cmd.exe
+
+CG_TOOL_ROOT := D:/ti/ccs1031/ccs/tools/compiler/ti-cgt-c6000_8.3.8
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
@@ -23,8 +25,8 @@ $(GEN_CMDS__FLAG) \
 
 -include ../makefile.init
 
-RM := rm -rf
-RMDIR := rm -rf
+RM := DEL /F
+RMDIR := RMDIR /S/Q
 
 # All of the sources participating in the build are defined here
 -include sources.mk
@@ -148,23 +150,23 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 TIMER_C6748.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: C6000 Linker'
-	"/home/vyldram/ti/ccs930/ccs/tools/compiler/ti-cgt-c6000_8.3.5/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=c6748 -g --c99 --strict_ansi --diag_warning=225 --diag_wrap=off --display_error_number -z -m"TIMER_C6748.map" --heap_size=0x800 --stack_size=0x800 -i"/home/vyldram/ti/ccs930/ccs/tools/compiler/ti-cgt-c6000_8.3.5/lib" -i"/home/vyldram/ti/ccs930/ccs/tools/compiler/ti-cgt-c6000_8.3.5/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="TIMER_C6748_linkInfo.xml" --rom_model -o "TIMER_C6748.out" $(ORDERED_OBJS)
+	"D:/ti/ccs1031/ccs/tools/compiler/ti-cgt-c6000_8.3.8/bin/cl6x" -mv6740 -O3 --opt_for_speed=5 --define=c6748 -g --c99 --strict_ansi --diag_warning=225 --diag_wrap=off --display_error_number -z -m"TIMER_C6748.map" --heap_size=0x800 --stack_size=0x800 -i"D:/ti/ccs1031/ccs/tools/compiler/ti-cgt-c6000_8.3.8/lib" -i"D:/ti/ccs1031/ccs/tools/compiler/ti-cgt-c6000_8.3.8/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="TIMER_C6748_linkInfo.xml" --rom_model -o "TIMER_C6748.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 TIMER_C6748.hex: $(EXE_OUTPUTS)
-	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
+	@echo 'Building secondary target: "$@"'
 	@echo 'Invoking: C6000 Hex Utility'
-	"/home/vyldram/ti/ccs930/ccs/tools/compiler/ti-cgt-c6000_8.3.5/bin/hex6x"  -o "TIMER_C6748.hex" $(EXE_OUTPUTS__QUOTED)
-	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
+	"D:/ti/ccs1031/ccs/tools/compiler/ti-cgt-c6000_8.3.8/bin/hex6x" --diag_wrap=off -o "TIMER_C6748.hex" $(EXE_OUTPUTS__QUOTED)
+	@echo 'Finished building secondary target: "$@"'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "source/Cache.obj" "source/DDR2.obj" "source/IDMA.obj" "source/INTC.obj" "source/PLLC.obj" "source/PSC.obj" "source/SYSCFG.obj" "source/intvecs.obj" "source/main.obj" 
-	-$(RM) "source/Cache.d" "source/DDR2.d" "source/IDMA.d" "source/INTC.d" "source/PLLC.d" "source/PSC.d" "source/SYSCFG.d" "source/main.d" 
-	-$(RM) "source/intvecs.d" 
+	-$(RM) "source\Cache.obj" "source\DDR2.obj" "source\IDMA.obj" "source\INTC.obj" "source\PLLC.obj" "source\PSC.obj" "source\SYSCFG.obj" "source\intvecs.obj" "source\main.obj" 
+	-$(RM) "source\Cache.d" "source\DDR2.d" "source\IDMA.d" "source\INTC.d" "source\PLLC.d" "source\PSC.d" "source\SYSCFG.d" "source\main.d" 
+	-$(RM) "source\intvecs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
